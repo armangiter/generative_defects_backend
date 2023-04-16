@@ -17,7 +17,6 @@ class DefectTypeApi(APIView):
             model = DefectType
             fields = ("name",)
 
-
     @extend_schema(request=InputSerializer)
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
@@ -38,10 +37,6 @@ class DefectTypeApi(APIView):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-# # GET api/defects/types/
-# class DefectTypeListApi(APIView):
-
-
 
 # [GET, PUT, DELETE] api/defects/types/{type_id}/
 class DefectTypeDetailApi(APIView):
@@ -60,7 +55,7 @@ class DefectTypeDetailApi(APIView):
         serializer = self.OutputSerializer(defect_type)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
     @extend_schema(request=InputSerializer, responses=OutputSerializer)
     def put(self, request, type_id):
         serializer = self.InputSerializer(data=request.data)
@@ -74,7 +69,7 @@ class DefectTypeDetailApi(APIView):
             return Response(f"Error {ex}", status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_200_OK)
-    
+
     def delete(self, request, type_id):
         try:
             DefectTypeService.defect_type_delete(type_id=type_id)
@@ -82,16 +77,3 @@ class DefectTypeDetailApi(APIView):
             return Response(f"Error {ex}", status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-
-# # PUT api/defects/types/{type_id}/
-# class DefectTypeUpdateApi(APIView):
-    
-
-    
-
-
-# # DELETE api/defects/types/{type_id}/
-# class DefectTypeDeleteApi(APIView):
-    

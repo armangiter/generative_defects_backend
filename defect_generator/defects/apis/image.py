@@ -7,9 +7,8 @@ from defect_generator.defects.models import Image
 from defect_generator.defects.services.image import ImageService
 
 
-# POST api/defects/types
+# [POST, GET] api/defects/images/
 class ImageApi(APIView):
-
     class InputSerializer(serializers.Serializer):
         file = serializers.FileField()
         defect_type_id = serializers.IntegerField()
@@ -19,16 +18,13 @@ class ImageApi(APIView):
             model = Image
             fields = ("file", "defect_type")
 
-
     @extend_schema(request=InputSerializer)
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:
-            ImageService.image_create(
-                **serializer.validated_data
-            )
+            ImageService.image_create(**serializer.validated_data)
         except Exception as ex:
             return Response(f"Error {ex}", status=status.HTTP_400_BAD_REQUEST)
 
@@ -41,14 +37,9 @@ class ImageApi(APIView):
         serializer = self.OutputSerializer(query, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-
-# # GET api/defects/images/
-# class ImageListApi(APIView):
-    
 
 
-# GET api/defects/images/{image_id}/
+# [GET, DELETE] api/defects/images/{image_id}/
 class ImageDetailApi(APIView):
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
@@ -62,7 +53,7 @@ class ImageDetailApi(APIView):
         serializer = self.OutputSerializer(image)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
     def delete(self, request, image_id):
         try:
             ImageService.image_delete(image_id=image_id)
@@ -70,8 +61,3 @@ class ImageDetailApi(APIView):
             return Response(f"Error {ex}", status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-# # DELETE api/defects/image/{image_id}/
-# class ImageDeleteApi(APIView):
-    
