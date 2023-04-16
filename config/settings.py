@@ -1,0 +1,161 @@
+import os
+from pathlib import Path
+
+from config.env import BASE_DIR, env
+
+env.read_env(os.path.join(BASE_DIR, ".env"))
+
+SECRET_KEY = "django-insecure-3nff8m$d$ih#^+^+%7yafv2_2u9tvspoiqpdop_1(ccc86&p)-"
+
+DEBUG = True
+
+ALLOWED_HOSTS = []
+
+
+LOCAL_APPS = [
+    "defect_generator.defects.apps.DefectsConfig",
+    "defect_generator.integrations.apps.IntegrationsConfig",
+    "defect_generator.api.apps.ApiConfig",
+]
+
+THIRD_PARTY_APPS = [
+    "rest_framework",
+    "django_filters",
+    "corsheaders",
+    "drf_spectacular",
+    "django_extensions",
+    "debug_toolbar",
+]
+
+INSTALLED_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    *THIRD_PARTY_APPS,
+    *LOCAL_APPS,
+]
+
+DEBUG_TOOLBAR_CONFIG = {"SHOW_TOOLBAR_CALLBACK": lambda request: True}
+
+MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+ROOT_URLCONF = "config.urls"
+
+SHELL_PLUS_PRINT_SQL = True
+
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = "config.wsgi.application"
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env.str("DB_NAME"),
+        "USER": env.str("DB_USER"),
+        "PASSWORD": env.str("DB_PASSWORD"),
+        "HOST": env.str("DB_HOST"),
+        "PORT": env.str("DB_PORT"),
+    }
+}
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
+]
+
+LANGUAGE_CODE = "en-us"
+
+TIME_ZONE = "UTC"
+
+USE_I18N = True
+
+USE_TZ = True
+
+
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_URL = "/static/"
+
+MEDIA_ROOT_NAME = "media"
+MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_ROOT_NAME)
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Rutilea Defects Generator API",
+    "DESCRIPTION": "Defect Generator",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}
+
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+MINIO_ACCESS_KEY = env("MINIO_ROOT_USER")
+MINIO_SECRET_KEY = env("MINIO_ROOT_PASSWORD")
+MINIO_BUCKET_NAME = env("MINIO_BUCKET_NAME")
+MINIO_ENDPOINT = env("MINIO_ENDPOINT")
+
+FILE_MAX_SIZE = env.int("FILE_MAX_SIZE", default=10485760)  # 10 MiB
+FILE_UPLOAD_STORAGE = env("FILE_UPLOAD_STORAGE")
+
+if FILE_UPLOAD_STORAGE == "LOCAL":
+    MEDIA_URL = f"/{MEDIA_ROOT_NAME}/"
+
+if FILE_UPLOAD_STORAGE == "S3":
+    DEFAULT_FILE_STORAGE = "config.storage_backends.PublicMediaStorage"
+
+    AWS_ACCESS_KEY_ID = MINIO_ACCESS_KEY
+    AWS_SECRET_ACCESS_KEY = MINIO_SECRET_KEY
+    AWS_STORAGE_BUCKET_NAME = MINIO_BUCKET_NAME
+    AWS_S3_ENDPOINT_URL = env("AWS_S3_ENDPOINT_URL")
+
+    _AWS_S3_CUSTOM_DOMAIN = env("AWS_S3_CUSTOM_DOMAIN", default="")
+
+    if _AWS_S3_CUSTOM_DOMAIN:
+        AWS_S3_CUSTOM_DOMAIN = _AWS_S3_CUSTOM_DOMAIN
+
+
+# https://docs.celeryproject.org/en/stable/userguide/configuration.html
+CELERY_BROKER_URL = env("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND")
+CELERY_TIMEZONE = "UTC"
