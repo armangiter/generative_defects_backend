@@ -1,0 +1,3 @@
+[submodule "generative-defects"]
+	path = generative-defects
+	url = https://github.com/RUTILEA/generative-defects.git

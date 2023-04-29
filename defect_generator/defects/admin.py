@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from defect_generator.defects.models import DefectType, Image
+from defect_generator.defects.models import DefectModel, DefectType, Image
 
 @admin.register(DefectType)
 class DefectTypeAdmin(admin.ModelAdmin):
@@ -11,10 +11,18 @@ class DefectTypeAdmin(admin.ModelAdmin):
 
 
 @admin.register(Image)
-class AnnotationAdmin(admin.ModelAdmin):
+class DefectTypeAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "file",
         "defect_type_id",
     )
     list_filter = ("defect_type_id",)
+
+
+@admin.register(DefectModel)
+class DefectModelAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "file",
+    )

@@ -5,6 +5,7 @@ from drf_spectacular.utils import extend_schema
 
 from defect_generator.defects.models import DefectType
 from defect_generator.defects.services.defect_type import DefectTypeService
+from defect_generator.defects.services.inference import InferenceService
 
 
 # [POST, GET] api/defects/types/

@@ -15,6 +15,7 @@ RUN pip install poetry==1.4.2
 
 COPY ./pyproject.toml ./poetry.lock* /app/
 
+# COPY ./generative-defects/ .
 RUN poetry config virtualenvs.create false && \
     poetry install --no-root
 

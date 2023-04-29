@@ -119,6 +119,7 @@ STATIC_URL = "/static/"
 MEDIA_ROOT_NAME = "media"
 MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_ROOT_NAME)
 
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 SPECTACULAR_SETTINGS = {
@@ -135,7 +136,7 @@ MINIO_SECRET_KEY = env("MINIO_ROOT_PASSWORD")
 MINIO_BUCKET_NAME = env("MINIO_BUCKET_NAME")
 MINIO_ENDPOINT = env("MINIO_ENDPOINT")
 
-FILE_MAX_SIZE = env.int("FILE_MAX_SIZE", default=10485760)  # 10 MiB
+FILE_MAX_SIZE = env.int("FILE_MAX_SIZE", default=10485760*20)  # 100 MiB
 FILE_UPLOAD_STORAGE = env("FILE_UPLOAD_STORAGE")
 
 if FILE_UPLOAD_STORAGE == "LOCAL":
@@ -159,3 +160,30 @@ if FILE_UPLOAD_STORAGE == "S3":
 CELERY_BROKER_URL = env("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND")
 CELERY_TIMEZONE = "UTC"
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {"class": "logging.StreamHandler", "formatter": "verbose"},
+    },
+    "loggers": {
+        "api": {
+            "handlers": ["console"],
+            "level": os.environ.get("DJANGO_LOG_LEVEL", "DEBUG"),
+        },
+        "django": {
+            "handlers": ["console"],
+            "propagate": True,
+            "level": "INFO",
+        },
+    },
+    "formatters": {
+        "verbose": {
+            "format": "[{asctime}] ({levelname}) - {name} - {message}",
+            "datefmt": "%Y/%m/%d %H:%M:%S",
+            "style": "{",
+        }
+    },
+}

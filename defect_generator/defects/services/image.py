@@ -1,5 +1,4 @@
-import logging
-import os
+import logging, os
 from pathlib import Path
 
 from django.conf import settings
@@ -9,7 +8,7 @@ from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 
 from defect_generator.defects.models import Image
-from defect_generator.defects.tasks import upload_image as upload_image_task
+from defect_generator.defects.tasks.images import upload_image as upload_image_task
 
 
 logger = logging.getLogger(__name__)
