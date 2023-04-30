@@ -13,10 +13,7 @@ import PIL
 from defect_generator.defects.models import Image, DefectModel, DefectType
 from defect_generator.defects.tasks.inference import inference as inference_task
 from defect_generator.defects.utils import download_file
-from generativeـdefects.generator import Generator
-# from generativeـdefects.generator import Generator
-
-# from generativeـdefects.generator import Generator
+from generative_defects.generator import Generator
 
 
 logger = logging.getLogger(__name__)
