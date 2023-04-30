@@ -1334,7 +1334,7 @@ files = [
 name = "pillow"
 version = "9.5.0"
 description = "Python Imaging Library (Fork)"
-category = "dev"
+category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -2397,4 +2397,4 @@ torch = "1.13.1"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "463d4c12f596f3d2b7751054a2cdebaee4f03088b7cbb05f916b4fbb1bd9b731"
+content-hash = "a51b8bc0adb2444922e471c63203e955a624a9a590333838fdac66094d9a0018"
