@@ -29,6 +29,16 @@ ipython = "^8.12.0"
 django-debug-toolbar = "^4.0.0"
 
 
+[tool.poetry.group.core.dependencies]
+torch = "1.13.1"
+xformers = "0.0.16"
+jinja2 = "^3.1.2"
+tensorboard = "^2.12.2"
+ftfy = "^6.1.1"
+transformers = ">=4.25.1"
+torchvision = "<=0.15.1"
+accelerate = ">=0.16.0"
+
 
 [build-system]
 requires = ["poetry-core"]
