@@ -13,7 +13,7 @@ import PIL
 from defect_generator.defects.models import Image, DefectModel, DefectType
 from defect_generator.defects.tasks.inference import inference as inference_task
 from defect_generator.defects.utils import download_file
-from generative_defects.generator import Generator
+
 
 
 logger = logging.getLogger(__name__)
@@ -58,22 +58,21 @@ class InferenceService:
         print(mask_file.name)
         print(mask_file_path)
 
-        gen = Generator()
+        # gen = Generator()
 
-        print("Setting model")
-        gen.set_model(model_path, 9)
+        # print("Setting model")
+        # gen.set_model(model_path, 9)
 
-        print("Start generating images")
-        image = PIL.Image.open(image_file_path).convert("RGB").resize((512, 512))
-        mask_image = PIL.Image.open(mask_file_path).convert("RGB").resize((512, 512))
-        save_path="./generate"
+        # print("Start generating images")
+        # image = PIL.Image.open(image_file_path).convert("RGB").resize((512, 512))
+        # mask_image = PIL.Image.open(mask_file_path).convert("RGB").resize((512, 512))
+        # save_path="./generate"
 
-        images = gen.generate(image=image, mask=mask_image, input_promt="a sks dog sitting on a bench")
+        # images = gen.generate(image=image, mask=mask_image, input_promt="a sks dog sitting on a bench")
 
-        for idx, img in enumerate(images):
-            img.save(os.path.join(save_path,f"results_{idx}.jpg"))
-        print("Done generating")
-
+        # for idx, img in enumerate(images):
+        #     img.save(os.path.join(save_path,f"results_{idx}.jpg"))
+        # print("Done generating")
 
         # gen = Generator()
         # gen.set_model(defect_model.file)
