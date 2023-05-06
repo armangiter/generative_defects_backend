@@ -16,7 +16,7 @@ class DefectTypeApi(APIView):
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = DefectType
-            fields = ("name",)
+            fields = ("id", "name",)
 
     @extend_schema(request=InputSerializer)
     def post(self, request):
@@ -47,7 +47,7 @@ class DefectTypeDetailApi(APIView):
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = DefectType
-            fields = ("name",)
+            fields = ("id", "name",)
 
     @extend_schema(responses=OutputSerializer)
     def get(self, request, type_id):

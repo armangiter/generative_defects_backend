@@ -16,7 +16,7 @@ class ImageApi(APIView):
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = Image
-            fields = ("file", "defect_type")
+            fields = ("id", "file", "defect_type")
 
     @extend_schema(request=InputSerializer)
     def post(self, request):
@@ -44,7 +44,7 @@ class ImageDetailApi(APIView):
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = Image
-            fields = ("file", "defect_type")
+            fields = ("id", "file", "defect_type")
 
     @extend_schema(responses=OutputSerializer)
     def get(self, request, image_id):

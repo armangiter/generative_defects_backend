@@ -16,7 +16,7 @@ class DefectModelApi(APIView):
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = DefectModel
-            fields = ("file",)
+            fields = ("id", "file",)
 
     @extend_schema(request=InputSerializer)
     def post(self, request):

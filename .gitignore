@@ -26,6 +26,10 @@ mediafiles
 *.py[cod]
 *$py.class
 
+
+# Mac OS
+.DS_Store
+
 # C extensions
 *.so
 
