@@ -1,7 +1,6 @@
-from django.db import transaction
 from django.db.models import QuerySet
 
-from defect_generator.defects.models import DefectModel, DefectType
+from defect_generator.defects.models import DefectModel
 
 from django.core.files import File
 
@@ -15,3 +14,10 @@ class DefectModelService:
     def defect_model_list(*, filters=None) -> QuerySet[DefectModel]:
         return DefectModel.objects.all()
     
+    @staticmethod
+    def defect_model_get(*, model_id: int, filters=None) -> DefectModel:
+        return DefectModel.objects.get(id=model_id)
+
+    @staticmethod
+    def defect_model_delete(*, model_id: int) -> None:
+        DefectModel.objects.filter(id=model_id).delete(id=model_id)

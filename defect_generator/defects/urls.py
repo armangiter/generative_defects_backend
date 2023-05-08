@@ -1,5 +1,5 @@
 from django.urls import include, path
-from defect_generator.defects.apis.defect_model import DefectModelApi
+from defect_generator.defects.apis.defect_model import DefectModelApi, DefectModelDetailApi
 from defect_generator.defects.apis.fine_tune import FineTuneApi
 
 from defect_generator.defects.apis.image import ImageApi, ImageDetailApi
@@ -16,6 +16,7 @@ defect_type_patterns = [
 
 defect_model_patterns = [
     path("", DefectModelApi.as_view(), name="defect-models"),
+    path("<int:model_id>/", DefectModelDetailApi.as_view(), name="defect-models-detail"),
 ]
 
 image_patterns = [

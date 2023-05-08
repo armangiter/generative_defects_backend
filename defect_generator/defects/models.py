@@ -49,6 +49,7 @@ class MaskImage(models.Model):
 
 
 class DefectModel(models.Model):
+    name = models.CharField(max_length=127)
     file = models.FileField(
         upload_to=defect_models_file_generate_upload_path,
         null=True,
