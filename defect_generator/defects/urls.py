@@ -4,7 +4,8 @@ from defect_generator.defects.apis.fine_tune import FineTuneApi
 
 from defect_generator.defects.apis.image import ImageApi, ImageDetailApi
 from defect_generator.defects.apis.defect_type import DefectTypeApi, DefectTypeDetailApi
-from defect_generator.defects.apis.inference import InferenceApi 
+from defect_generator.defects.apis.inference import InferenceApi
+from defect_generator.defects.apis.inference_images import InferenceImageApi, InferenceImageDetailApi 
 
 app_name = "defects"
 
@@ -30,10 +31,16 @@ fine_tune_patterns = [
     path("", FineTuneApi.as_view(), name="fine_tune"),
 ]
 
+result_patterns = [
+    path("", InferenceImageApi.as_view(), name="result"),
+    path("<int:result_id>/", InferenceImageDetailApi.as_view(), name="result-detail"),
+]
+
 urlpatterns = [
     path("types/", include((defect_type_patterns, "defect-types"))),
     path("images/", include((image_patterns, "images"))),
     path("models/", include((defect_model_patterns, "models"))),
     path("inference/", include((inference_patterns, "inferences"))),
     path("fine_tune/", include((fine_tune_patterns, "fine_tunes"))),
+    path("results/", include((result_patterns, "results"))),
 ]

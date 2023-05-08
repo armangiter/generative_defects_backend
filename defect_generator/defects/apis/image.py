@@ -5,6 +5,7 @@ from drf_spectacular.utils import extend_schema
 
 from defect_generator.defects.models import Image
 from defect_generator.defects.services.image import ImageService
+from defect_generator.defects.utils import get_real_url
 
 
 # [POST, GET] api/defects/images/
@@ -14,9 +15,14 @@ class ImageApi(APIView):
         defect_type_id = serializers.IntegerField()
 
     class OutputSerializer(serializers.ModelSerializer):
+        file = serializers.SerializerMethodField()
+
         class Meta:
             model = Image
             fields = ("id", "file", "defect_type")
+
+        def get_file(self, obj: Image):
+            return get_real_url(obj.file.url)
 
     @extend_schema(request=InputSerializer)
     def post(self, request):
@@ -42,9 +48,14 @@ class ImageApi(APIView):
 # [GET, DELETE] api/defects/images/{image_id}/
 class ImageDetailApi(APIView):
     class OutputSerializer(serializers.ModelSerializer):
+        file = serializers.SerializerMethodField()
+
         class Meta:
             model = Image
             fields = ("id", "file", "defect_type")
+
+        def get_file(self, obj: Image):
+            return get_real_url(obj.file.url)
 
     @extend_schema(responses=OutputSerializer)
     def get(self, request, image_id):

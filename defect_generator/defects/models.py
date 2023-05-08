@@ -78,7 +78,14 @@ class Inference(models.Model):
         return f"{self.id}"
 
 
-class InferenceImages(models.Model):
+class TimeStamp(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        abstract = True
+
+
+class InferenceImage(TimeStamp):
     inference = models.ForeignKey(
         Inference, related_name="inference_images", on_delete=models.CASCADE
     )
