@@ -4,6 +4,8 @@ from uuid import uuid4
 
 from django.conf import settings
 
+from config.env import env
+
 logger = logging.getLogger(__name__)
 
 
@@ -56,3 +58,16 @@ def download_file(url: str, file_name: str):
     print(file_name)
     logger.info(f"Wrote file {file_name} on disk...")
     return save_path
+
+
+def get_real_url(url: str) -> str:
+    real_host: str = f"{env('HOST_URL')}:9000"
+    new_url: str = ""
+    for part in url.split("/")[3:]:
+        new_url += f"{part}/"
+
+    if new_url[-1] == "/":
+        new_url = new_url[:-1]
+
+    return f"{real_host}/{new_url}"
+    
