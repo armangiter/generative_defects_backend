@@ -2,22 +2,21 @@ import logging
 from django.db.models import QuerySet
 
 
-from defect_generator.defects.models import Image, InferenceImage
+from defect_generator.defects.models import Image, Result, ResultImage
 
 
 logger = logging.getLogger(__name__)
 
 
-class InferenceImageService:
+class ResultService:
+    @staticmethod
+    def result_list(*, filters=None) -> QuerySet[Image]:
+        return Result.objects.prefetch_related("result_images").all()
 
     @staticmethod
-    def inference_image_list(*, filters=None) -> QuerySet[Image]:
-        return InferenceImage.objects.select_related("inference").all()
+    def result_get(*, id: int, filters=None) -> Image:
+        return Result.objects.prefetch_related("result_images").get(id=id)
 
     @staticmethod
-    def inference_image_get(*, id: int, filters=None) -> Image:
-        return InferenceImage.objects.select_related("inference").get(id=id)
-
-    @staticmethod
-    def inference_image_delete(*, image_id: int) -> None:
-        InferenceImage.objects.filter(id=image_id).delete()
+    def result_delete(*, image_id: int) -> None:
+        Result.objects.filter(id=image_id).delete()

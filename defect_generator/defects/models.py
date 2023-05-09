@@ -61,18 +61,18 @@ class DefectModel(models.Model):
         return f"{self.id}, {self.file.name}"
 
 
-class Inference(models.Model):
+class Result(models.Model):
     image = models.ForeignKey(
-        Image, related_name="inference_results", on_delete=models.CASCADE
+        Image, related_name="results", on_delete=models.CASCADE
     )
     mask_image = models.ForeignKey(
-        MaskImage, related_name="inference_results", on_delete=models.CASCADE
+        MaskImage, related_name="results", on_delete=models.CASCADE
     )
     defect_type = models.ForeignKey(
-        DefectType, on_delete=models.CASCADE, related_name="inference_results"
+        DefectType, on_delete=models.CASCADE, related_name="results"
     )
     defect_model = models.ForeignKey(
-        DefectModel, on_delete=models.CASCADE, related_name="inference_results"
+        DefectModel, on_delete=models.CASCADE, related_name="results"
     )
 
     def __str__(self) -> str:
@@ -86,9 +86,9 @@ class TimeStamp(models.Model):
         abstract = True
 
 
-class InferenceImage(TimeStamp):
-    inference = models.ForeignKey(
-        Inference, related_name="inference_images", on_delete=models.CASCADE
+class ResultImage(TimeStamp):
+    result = models.ForeignKey(
+        Result, related_name="result_images", on_delete=models.CASCADE
     )
     file = models.FileField(
         upload_to=inference_images_file_generate_upload_path,

@@ -4,8 +4,8 @@ from defect_generator.defects.models import (
     DefectModel,
     DefectType,
     Image,
-    Inference,
-    InferenceImage,
+    Result,
+    ResultImage,
     MaskImage,
 )
 
@@ -46,7 +46,7 @@ class MaskImageAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(Inference)
+@admin.register(Result)
 class InferenceAdmin(admin.ModelAdmin):
     list_display = (
         "id",
@@ -58,10 +58,11 @@ class InferenceAdmin(admin.ModelAdmin):
     list_filter = ("defect_type_id",)
 
 
-@admin.register(InferenceImage)
-class InferenceImageAdmin(admin.ModelAdmin):
+@admin.register(ResultImage)
+class ResultImageAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "inference_id",
+        "result_id",
         "file",
     )
+

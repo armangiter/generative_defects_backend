@@ -1,11 +1,17 @@
 from django.urls import include, path
-from defect_generator.defects.apis.defect_model import DefectModelApi, DefectModelDetailApi
+from defect_generator.defects.apis.defect_model import (
+    DefectModelApi,
+    DefectModelDetailApi,
+)
 from defect_generator.defects.apis.fine_tune import FineTuneApi
 
 from defect_generator.defects.apis.image import ImageApi, ImageDetailApi
 from defect_generator.defects.apis.defect_type import DefectTypeApi, DefectTypeDetailApi
 from defect_generator.defects.apis.inference import InferenceApi
-from defect_generator.defects.apis.inference_images import InferenceImageApi, InferenceImageDetailApi 
+from defect_generator.defects.apis.inference_images import (
+    ResultImageApi,
+    ResultDetailApi,
+)
 
 app_name = "defects"
 
@@ -16,7 +22,9 @@ defect_type_patterns = [
 
 defect_model_patterns = [
     path("", DefectModelApi.as_view(), name="defect-models"),
-    path("<int:model_id>/", DefectModelDetailApi.as_view(), name="defect-models-detail"),
+    path(
+        "<int:model_id>/", DefectModelDetailApi.as_view(), name="defect-models-detail"
+    ),
 ]
 
 image_patterns = [
@@ -33,8 +41,8 @@ fine_tune_patterns = [
 ]
 
 result_patterns = [
-    path("", InferenceImageApi.as_view(), name="result"),
-    path("<int:result_id>/", InferenceImageDetailApi.as_view(), name="result-detail"),
+    path("", ResultImageApi.as_view(), name="result"),
+    path("<int:result_id>/", ResultDetailApi.as_view(), name="result-detail"),
 ]
 
 urlpatterns = [
