@@ -31,7 +31,7 @@ class ImageService:
 
     @staticmethod
     def image_list(*, filters=None) -> QuerySet[Image]:
-        return Image.objects.all()
+        return Image.objects.filter(tuned=False)
 
     @staticmethod
     def image_get(*, id: int, filters=None) -> Image:
