@@ -4,17 +4,22 @@ from rest_framework import serializers, status
 from drf_spectacular.utils import extend_schema
 
 from defect_generator.defects.models import Result, ResultImage
-from defect_generator.defects.services.inference_image import ResultService
+from defect_generator.defects.services.result import ResultService
 from defect_generator.defects.utils import get_real_url
 
 
 # [GET] api/defects/results/
-class ResultImageApi(APIView):
+class ResultApi(APIView):
     class OutputSerializer(serializers.ModelSerializer):
         class ResultImageSerializer(serializers.ModelSerializer):
+            file = serializers.SerializerMethodField()
+
             class Meta:
                 model = ResultImage
-                fields = ["id", "created", "file"]
+                fields = ["id", "file"]
+            
+            def get_file(self, obj: ResultImage):
+                return get_real_url(obj.file.url)
 
         result_images = ResultImageSerializer(many=True)
 
@@ -27,6 +32,7 @@ class ResultImageApi(APIView):
                 "defect_type_id",
                 "defect_model_id",
                 "result_images",
+                "created",
             )
 
     @extend_schema(responses=OutputSerializer)
@@ -42,10 +48,15 @@ class ResultImageApi(APIView):
 class ResultDetailApi(APIView):
     class OutputSerializer(serializers.ModelSerializer):
         class ResultImageSerializer(serializers.ModelSerializer):
+            file = serializers.SerializerMethodField()
+            
             class Meta:
                 model = ResultImage
-                fields = ["id", "created", "file"]
+                fields = ["id", "file"]
 
+            def get_file(self, obj: ResultImage):
+                return get_real_url(obj.file.url)
+            
         result_images = ResultImageSerializer(many=True)
 
         class Meta:
@@ -57,6 +68,7 @@ class ResultDetailApi(APIView):
                 "defect_type_id",
                 "defect_model_id",
                 "result_images",
+                "created",
             )
 
     @extend_schema(responses=OutputSerializer)

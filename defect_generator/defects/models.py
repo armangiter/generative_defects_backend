@@ -61,10 +61,15 @@ class DefectModel(models.Model):
         return f"{self.id}, {self.file.name}"
 
 
-class Result(models.Model):
-    image = models.ForeignKey(
-        Image, related_name="results", on_delete=models.CASCADE
-    )
+class TimeStamp(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        abstract = True
+
+
+class Result(TimeStamp):
+    image = models.ForeignKey(Image, related_name="results", on_delete=models.CASCADE)
     mask_image = models.ForeignKey(
         MaskImage, related_name="results", on_delete=models.CASCADE
     )
@@ -79,14 +84,7 @@ class Result(models.Model):
         return f"{self.id}"
 
 
-class TimeStamp(models.Model):
-    created = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        abstract = True
-
-
-class ResultImage(TimeStamp):
+class ResultImage(models.Model):
     result = models.ForeignKey(
         Result, related_name="result_images", on_delete=models.CASCADE
     )
