@@ -8,10 +8,13 @@ services:
                     python manage.py collectstatic --noinput &&
                     python manage.py runserver 0.0.0.0:8000"
     ports:
-      - "81:8000"
+      - "8000:8000"
     volumes:
       - .:/app
     restart: "always"
+    networks:
+      - generative-network
+      - inference-network
 
   db:
     image: postgres:14.5
@@ -21,7 +24,9 @@ services:
         - pgdata:/var/lib/postgresql/data/
     ports:
       - "5432:5432"
-  
+    networks:
+      - generative-network
+
   minio:
     image: minio/minio
     hostname: "minio"
@@ -33,6 +38,9 @@ services:
     ports:
       - "9000:9000"
       - "9001:9001"
+    networks:
+      - generative-network
+      - minio-network
 
   celery:
     build: .
@@ -44,7 +52,9 @@ services:
     depends_on:
       - db
       - redis
-
+    networks:
+      - generative-network
+      - inference-network
       
   redis:
     restart: always
@@ -53,9 +63,19 @@ services:
       - "6379"
     volumes:
       - redis-data:/data
+    networks:
+      - generative-network
 
 volumes:
   redis-data:
   minio-data:
   pgdata:
+
+networks:
+  generative-network:
+  minio-network:
+    external: true
+  inference-network:
+    external: true
+      
 

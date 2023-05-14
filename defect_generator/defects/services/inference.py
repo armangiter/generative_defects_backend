@@ -36,7 +36,7 @@ class InferenceService:
         model_url = get_real_url(defect_model.file.url)
         
         requests.post(
-            f"ml_url/inference/",
+            "http://inference_web:8000/inference/",
             data={
                 "model_url": model_url,
                 "number_of_images": number_of_images,
