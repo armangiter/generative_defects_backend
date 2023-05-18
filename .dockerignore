@@ -24,7 +24,3 @@ src/node_modules
 web/media
 web/static/CACHE
 stats
-static
-staticfiles
-media
-mediafiles
