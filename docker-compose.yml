@@ -12,6 +12,8 @@ services:
     volumes:
       - .:/app
     restart: "always"
+    depends_on:
+      - db
     networks:
       - generative-network
       - inference-network

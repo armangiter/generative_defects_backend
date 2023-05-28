@@ -55,10 +55,10 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-# CSRF_TRUSTED_ORIGINS = [
-#     "http://localhost:8997",
-#     "http://localhost:8995",
-# ]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8997",
+    "http://localhost:8995",
+]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
@@ -69,6 +69,9 @@ CORS_ALLOWED_ORIGINS = [
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+    ]
 }
 
 ROOT_URLCONF = "config.urls"
@@ -164,6 +167,7 @@ if FILE_UPLOAD_STORAGE == "S3":
     AWS_SECRET_ACCESS_KEY = MINIO_SECRET_KEY
     AWS_STORAGE_BUCKET_NAME = MINIO_BUCKET_NAME
     AWS_S3_ENDPOINT_URL = env("AWS_S3_ENDPOINT_URL")
+    AWS_QUERYSTRING_AUTH = False
 
     _AWS_S3_CUSTOM_DOMAIN = env("AWS_S3_CUSTOM_DOMAIN", default="")
 
