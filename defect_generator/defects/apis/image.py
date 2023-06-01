@@ -12,17 +12,26 @@ from defect_generator.defects.utils import get_real_url
 class ImageApi(APIView):
     class InputSerializer(serializers.Serializer):
         file = serializers.FileField()
+        mask_file = serializers.FileField()
         defect_type_id = serializers.IntegerField()
 
     class OutputSerializer(serializers.ModelSerializer):
         file = serializers.SerializerMethodField()
+        mask_file = serializers.SerializerMethodField()
 
         class Meta:
             model = Image
-            fields = ("id", "file", "defect_type")
+            fields = ("id", "file", "mask_file", "defect_type")
 
         def get_file(self, obj: Image):
-            return get_real_url(obj.file.url)
+            if bool(obj.file) is True:
+                return get_real_url(obj.file.url)
+            return None
+        
+        def get_mask_file(self, obj: Image):
+            if bool(obj.mask_file) is True:
+                return get_real_url(obj.mask_file.url)
+            return None
 
     @extend_schema(request=InputSerializer)
     def post(self, request):
@@ -49,13 +58,21 @@ class ImageApi(APIView):
 class ImageDetailApi(APIView):
     class OutputSerializer(serializers.ModelSerializer):
         file = serializers.SerializerMethodField()
+        mask_file = serializers.SerializerMethodField()
 
         class Meta:
             model = Image
-            fields = ("id", "file", "defect_type")
+            fields = ("id", "file", "mask_file", "defect_type")
 
         def get_file(self, obj: Image):
-            return get_real_url(obj.file.url)
+            if bool(obj.file) is True:
+                return get_real_url(obj.file.url)
+            return None
+        
+        def get_mask_file(self, obj: Image):
+            if bool(obj.mask_file) is True:
+                return get_real_url(obj.mask_file.url)
+            return None
 
     @extend_schema(responses=OutputSerializer)
     def get(self, request, image_id):

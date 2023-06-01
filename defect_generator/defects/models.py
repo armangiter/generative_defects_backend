@@ -30,7 +30,13 @@ class DefectModel(models.Model):
 
 class Image(models.Model):
     file = models.FileField(
-        upload_to=image_file_generate_upload_path,
+        # upload_to=image_file_generate_upload_path,
+        null=True,
+        blank=True,
+        max_length=600,
+    )
+    mask_file = models.FileField(
+        # upload_to=mask_file_generate_upload_path,
         null=True,
         blank=True,
         max_length=600,
@@ -52,22 +58,22 @@ class Image(models.Model):
         return f"{self.id}, {self.file.name}"
 
 
-class MaskImage(models.Model):
-    file = models.FileField(
-        upload_to=mask_file_generate_upload_path,
-        null=True,
-        blank=True,
-        max_length=600,
-    )
-    image = models.ForeignKey(
-        Image, related_name="mask_images", on_delete=models.CASCADE
-    )
-    defect_type = models.ForeignKey(
-        DefectType, on_delete=models.CASCADE, related_name="mask_images"
-    )
+# class MaskImage(models.Model):
+#     file = models.FileField(
+#         upload_to=mask_file_generate_upload_path,
+#         null=True,
+#         blank=True,
+#         max_length=600,
+#     )
+#     image = models.ForeignKey(
+#         Image, related_name="mask_images", on_delete=models.CASCADE
+#     )
+#     defect_type = models.ForeignKey(
+#         DefectType, on_delete=models.CASCADE, related_name="mask_images"
+#     )
 
-    def __str__(self) -> str:
-        return f"{self.id}, {self.file.name}"
+#     def __str__(self) -> str:
+#         return f"{self.id}, {self.file.name}"
 
 
 class TimeStamp(models.Model):
@@ -79,9 +85,6 @@ class TimeStamp(models.Model):
 
 class Result(TimeStamp):
     image = models.ForeignKey(Image, related_name="results", on_delete=models.CASCADE)
-    mask_image = models.ForeignKey(
-        MaskImage, related_name="results", on_delete=models.CASCADE
-    )
     defect_type = models.ForeignKey(
         DefectType, on_delete=models.CASCADE, related_name="results"
     )

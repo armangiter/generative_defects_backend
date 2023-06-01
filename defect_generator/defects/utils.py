@@ -70,4 +70,7 @@ def get_real_url(url: str) -> str:
         new_url = new_url[:-1]
 
     return f"{real_host}/{new_url}"
+
+def get_file_extension(filename: str):
+    return filename.split(".")[-1]
     
