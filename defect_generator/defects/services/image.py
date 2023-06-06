@@ -8,7 +8,10 @@ from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 
 from defect_generator.defects.models import Image
-from defect_generator.defects.tasks.images import upload_image as upload_image_task
+from defect_generator.defects.tasks.images import (
+    upload_image as upload_image_task,
+    update_image as update_image_task,
+)
 from defect_generator.defects.utils import get_file_extension, write_file_to_disk
 
 
@@ -18,23 +21,9 @@ logger = logging.getLogger(__name__)
 class ImageService:
     @staticmethod
     def image_create(*, file: File, mask_file: File, defect_type_id: int) -> None:
-        # Writing image on the disk (Temporarily)
-        storage = FileSystemStorage()
-        logger.info(f"file name: {file.name}")
-        file.name = storage.get_available_name(file)
-        logger.info(f"file name after : {file.name}")
-        storage.save(file.name, File(file))
-        logger.info(f"Received file: {file.name}")
-        file_path = os.path.join(settings.MEDIA_ROOT, file.name)
-
-        # Writing mask image on the disk (Temporarily)
-        storage = FileSystemStorage()
-        logger.info(f"file name: {mask_file.name}")
-        mask_file.name = storage.get_available_name(mask_file)
-        logger.info(f"file name after : {mask_file.name}")
-        storage.save(mask_file.name, File(mask_file))
-        logger.info(f"Received file: {mask_file.name}")
-        mask_file_path = os.path.join(settings.MEDIA_ROOT, mask_file.name)
+        # Writing image and mask on the disk (Temporarily)
+        file_path = write_file_to_disk(file=file)
+        mask_file_path = write_file_to_disk(file=mask_file)
 
         # Calling the celery task
         upload_image_task.delay(
@@ -58,8 +47,13 @@ class ImageService:
         mask_file_path = write_file_to_disk(file=mask_file)
 
         # Calling the celery task
-        upload_image_task.delay(
-            image_id, file_path, file.name, mask_file_path, mask_file.name, defect_type_id
+        update_image_task.delay(
+            image_id,
+            file_path,
+            file.name,
+            mask_file_path,
+            mask_file.name,
+            defect_type_id,
         )
 
     @staticmethod
@@ -71,7 +65,7 @@ class ImageService:
 class ImageUploadService:
     @transaction.atomic
     @staticmethod
-    def upload_image(
+    def image_create(
         *,
         file_path: str,
         file_name: str,
@@ -140,7 +134,7 @@ class ImageUploadService:
 
             image.mask_file = mask_image_file
             image.mask_file.name = f"masks/mask_{image.id}.{image_ext}"
-            
+
             image.defect_type_id = defect_type_id
 
             image.save(update_fields=["file", "mask_file", "defect_type"])
