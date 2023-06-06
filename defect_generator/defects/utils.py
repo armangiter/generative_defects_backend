@@ -3,6 +3,8 @@ import pathlib, requests, logging
 from uuid import uuid4
 
 from django.conf import settings
+from django.core.files import File
+from django.core.files.storage import FileSystemStorage
 
 from config.env import env
 
@@ -74,3 +76,12 @@ def get_real_url(url: str) -> str:
 def get_file_extension(filename: str):
     return filename.split(".")[-1]
     
+def write_file_to_disk(file: File) -> str:
+    storage = FileSystemStorage()
+    logger.info(f"file name: {file.name}")
+    file.name = storage.get_available_name(file)
+    logger.info(f"file name after : {file.name}")
+    storage.save(file.name, File(file))
+    logger.info(f"Received file: {file.name}")
+    file_path = os.path.join(settings.MEDIA_ROOT, file.name)
+    return file_path

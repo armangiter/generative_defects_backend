@@ -56,6 +56,11 @@ class ImageApi(APIView):
 
 # [GET, DELETE] api/defects/images/{image_id}/
 class ImageDetailApi(APIView):
+    class InputSerializer(serializers.Serializer):
+        file = serializers.FileField()
+        mask_file = serializers.FileField()
+        defect_type_id = serializers.IntegerField()
+
     class OutputSerializer(serializers.ModelSerializer):
         file = serializers.SerializerMethodField()
         mask_file = serializers.SerializerMethodField()
@@ -81,6 +86,18 @@ class ImageDetailApi(APIView):
         serializer = self.OutputSerializer(image)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    @extend_schema(request=InputSerializer)
+    def put(self, request, image_id):
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            ImageService.image_update(image_id=image_id, **serializer.validated_data)
+        except Exception as ex:
+            return Response(f"Error {ex}", status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response(status=status.HTTP_200_OK)
 
     def delete(self, request, image_id):
         try:
