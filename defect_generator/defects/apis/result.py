@@ -28,7 +28,7 @@ class ResultApi(APIView):
             fields = (
                 "id",
                 "image",
-                "mask_image",
+                # "mask_image",
                 "defect_type_id",
                 "defect_model_id",
                 "result_images",
@@ -64,7 +64,7 @@ class ResultDetailApi(APIView):
             fields = (
                 "id",
                 "image",
-                "mask_image",
+                # "mask_image",
                 "defect_type_id",
                 "defect_model_id",
                 "result_images",
