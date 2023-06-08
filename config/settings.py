@@ -13,7 +13,7 @@ ALLOWED_HOSTS = [
     "128.65.167.198",
     "127.0.0.1",
     "localhost",
-    "generative"
+    "generative",
     "153.156.254.150"
 ]
 
