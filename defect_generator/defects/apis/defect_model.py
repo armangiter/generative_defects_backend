@@ -3,24 +3,23 @@ from rest_framework.response import Response
 from rest_framework import serializers, status
 from drf_spectacular.utils import extend_schema
 
-from defect_generator.defects.models import DefectModel, DefectType
+from defect_generator.defects.models import DefectModel
 from defect_generator.defects.services.defect_model import DefectModelService
-from defect_generator.defects.services.inference import InferenceService
 
 
 # [POST, GET] api/defects/models/
 class DefectModelApi(APIView):
-    class InputSerializer(serializers.Serializer):
+    class DefectModelInputSerializer(serializers.Serializer):
         file = serializers.FileField()
 
-    class OutputSerializer(serializers.ModelSerializer):
+    class DefectModelOutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = DefectModel
             fields = ("id", "name", "file",)
 
-    @extend_schema(request=InputSerializer)
+    @extend_schema(request=DefectModelInputSerializer)
     def post(self, request):
-        serializer = self.InputSerializer(data=request.data)
+        serializer = self.DefectModelInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:
@@ -30,29 +29,29 @@ class DefectModelApi(APIView):
 
         return Response(status=status.HTTP_201_CREATED)
 
-    @extend_schema(responses=OutputSerializer)
+    @extend_schema(responses=DefectModelOutputSerializer)
     def get(self, request):
         query = DefectModelService.defect_model_list()
 
-        serializer = self.OutputSerializer(query, many=True)
+        serializer = self.DefectModelOutputSerializer(query, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 # [GET, DELETE] api/defects/types/{type_id}/
 class DefectModelDetailApi(APIView):
-    class InputSerializer(serializers.Serializer):
+    class DefectModelDetailInputSerializer(serializers.Serializer):
         name = serializers.CharField(max_length=127)
 
-    class OutputSerializer(serializers.ModelSerializer):
+    class DefectModelDetailOutputSerializer(serializers.ModelSerializer):
         class Meta:
-            model = DefectType
+            model = DefectModel
             fields = ("id", "name", "file")
 
-    @extend_schema(responses=OutputSerializer)
+    @extend_schema(responses=DefectModelDetailOutputSerializer)
     def get(self, request, model_id):
         defect_type = DefectModelService.defect_model_get(model_id=model_id)
 
-        serializer = self.OutputSerializer(defect_type)
+        serializer = self.DefectModelDetailOutputSerializer(defect_type)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 

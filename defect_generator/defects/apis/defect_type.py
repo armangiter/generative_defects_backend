@@ -5,22 +5,21 @@ from drf_spectacular.utils import extend_schema
 
 from defect_generator.defects.models import DefectType
 from defect_generator.defects.services.defect_type import DefectTypeService
-from defect_generator.defects.services.inference import InferenceService
 
 
 # [POST, GET] api/defects/types/
 class DefectTypeApi(APIView):
-    class InputSerializer(serializers.Serializer):
+    class DefectTypeInputSerializer(serializers.Serializer):
         name = serializers.CharField(max_length=127)
 
-    class OutputSerializer(serializers.ModelSerializer):
+    class DefectTypeOutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = DefectType
             fields = ("id", "name",)
 
-    @extend_schema(request=InputSerializer)
+    @extend_schema(request=DefectTypeInputSerializer)
     def post(self, request):
-        serializer = self.InputSerializer(data=request.data)
+        serializer = self.DefectTypeInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:
@@ -30,36 +29,36 @@ class DefectTypeApi(APIView):
 
         return Response(status=status.HTTP_201_CREATED)
 
-    @extend_schema(responses=OutputSerializer)
+    @extend_schema(responses=DefectTypeOutputSerializer)
     def get(self, request):
         query = DefectTypeService.defect_type_list()
 
-        serializer = self.OutputSerializer(query, many=True)
+        serializer = self.DefectTypeOutputSerializer(query, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 # [GET, PUT, DELETE] api/defects/types/{type_id}/
 class DefectTypeDetailApi(APIView):
-    class InputSerializer(serializers.Serializer):
+    class DefectTypeDetailInputSerializer(serializers.Serializer):
         name = serializers.CharField(max_length=127)
 
-    class OutputSerializer(serializers.ModelSerializer):
+    class DefectTypeDetailOutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = DefectType
             fields = ("id", "name",)
 
-    @extend_schema(responses=OutputSerializer)
+    @extend_schema(responses=DefectTypeDetailOutputSerializer)
     def get(self, request, type_id):
         defect_type = DefectTypeService.defect_type_get(id=type_id)
 
-        serializer = self.OutputSerializer(defect_type)
+        serializer = self.DefectTypeDetailOutputSerializer(defect_type)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @extend_schema(request=InputSerializer, responses=OutputSerializer)
+    @extend_schema(request=DefectTypeDetailInputSerializer, responses=DefectTypeDetailOutputSerializer)
     def put(self, request, type_id):
-        serializer = self.InputSerializer(data=request.data)
+        serializer = self.DefectTypeDetailInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:

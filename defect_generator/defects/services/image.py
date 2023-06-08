@@ -1,7 +1,6 @@
-import logging, os
+import logging
 from pathlib import Path
 
-from django.conf import settings
 from django.db import transaction
 from django.db.models import QuerySet
 from django.core.files import File

@@ -3,8 +3,9 @@ from django.db import models
 from defect_generator.defects.utils import (
     defect_models_file_generate_upload_path,
     image_file_generate_upload_path,
-    inference_images_file_generate_upload_path,
     mask_file_generate_upload_path,
+    result_images_file_generate_upload_path,
+    results_file_generate_upload_path,
 )
 
 
@@ -84,7 +85,13 @@ class TimeStamp(models.Model):
 
 
 class Result(TimeStamp):
-    image = models.ForeignKey(Image, related_name="results", on_delete=models.CASCADE)
+    # keep track of image sent for generate which is came from inference backbone
+    image = models.FileField(
+        upload_to=results_file_generate_upload_path,
+        null=True,
+        blank=True,
+        max_length=600,
+    )
     defect_type = models.ForeignKey(
         DefectType, on_delete=models.CASCADE, related_name="results"
     )
@@ -101,7 +108,7 @@ class ResultImage(models.Model):
         Result, related_name="result_images", on_delete=models.CASCADE
     )
     file = models.FileField(
-        upload_to=inference_images_file_generate_upload_path,
+        upload_to=result_images_file_generate_upload_path,
         null=True,
         blank=True,
         max_length=600,

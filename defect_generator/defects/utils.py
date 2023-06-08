@@ -18,23 +18,28 @@ def file_generate_name(original_file_name):
 
 
 def image_file_generate_upload_path(instance, filename):
-    file_new_name = file_generate_name(original_file_name=filename)
-    return f"images/{file_new_name}"
+    # file_new_name = file_generate_name(original_file_name=filename)
+    return f"images/{os.path.basename(filename)}"
 
 
 def mask_file_generate_upload_path(instance, filename):
-    file_new_name = file_generate_name(original_file_name=filename)
-    return f"masks/{file_new_name}"
+    # file_new_name = file_generate_name(original_file_name=filename)
+    return f"masks/{os.path.basename(filename)}"
 
 
 def defect_models_file_generate_upload_path(instance, filename):
-    file_new_name = file_generate_name(original_file_name=filename)
-    return f"defect_models/{file_new_name}"
+    # file_new_name = file_generate_name(original_file_name=filename)
+    return f"defect_models/{os.path.basename(filename)}"
 
 
-def inference_images_file_generate_upload_path(instance, filename):
-    file_new_name = file_generate_name(original_file_name=filename)
-    return f"inference_images/{file_new_name}"
+def results_file_generate_upload_path(instance, filename):
+    # file_new_name = file_generate_name(original_file_name=filename)
+    return f"results/{os.path.basename(filename)}"
+
+
+def result_images_file_generate_upload_path(instance, filename):
+    # file_new_name = file_generate_name(original_file_name=filename)
+    return f"result_images/{os.path.basename(filename)}"
 
 
 def download_file(url: str, file_name: str):
@@ -73,9 +78,11 @@ def get_real_url(url: str) -> str:
 
     return f"{real_host}/{new_url}"
 
+
 def get_file_extension(filename: str):
     return filename.split(".")[-1]
-    
+
+
 def write_file_to_disk(file: File) -> str:
     storage = FileSystemStorage()
     logger.info(f"file name: {file.name}")

@@ -12,8 +12,10 @@ logger = get_task_logger(__name__)
     retry_backoff=True,
     retry_kwargs={"max_retries": 4},
 )
-def inference(
+def generate(
     self,
+    image_file_path: str,
+    mask_file_path: str,
     defect_type_id: int,
     defect_model_id: int,
     mask_mode: str,
@@ -21,9 +23,11 @@ def inference(
 ):
     logger.info("Start inferencing image...")
 
-    from defect_generator.defects.services.inference import InferenceCeleryService
+    from defect_generator.defects.services.generate import GenerateCeleryService
 
-    InferenceCeleryService.inference(
+    GenerateCeleryService.generate(
+        file_path=image_file_path,
+        mask_file_path=mask_file_path,
         defect_type_id=defect_type_id,
         defect_model_id=defect_model_id,
         mask_mode=mask_mode,

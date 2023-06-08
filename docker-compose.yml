@@ -2,7 +2,8 @@ version: "3.8"
 
 services:
   web:
-    container_name: "rutilea_defect_generator_backend"
+    container_name: generative_defects_web
+    hostname: generative
     build: .
     command: sh -c "python manage.py migrate &&
                     python manage.py collectstatic --noinput &&

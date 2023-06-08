@@ -76,7 +76,7 @@ class Migration(migrations.Migration):
                         blank=True,
                         max_length=600,
                         null=True,
-                        upload_to=defect_generator.defects.utils.inference_images_file_generate_upload_path,
+                        upload_to=defect_generator.defects.utils.result_images_file_generate_upload_path,
                     ),
                 ),
                 (

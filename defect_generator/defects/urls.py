@@ -8,11 +8,14 @@ from defect_generator.defects.apis.generate import GenerateApi
 
 from defect_generator.defects.apis.image import ImageApi, ImageDetailApi
 from defect_generator.defects.apis.defect_type import DefectTypeApi, DefectTypeDetailApi
-from defect_generator.defects.apis.inference import InferenceApi
 from defect_generator.defects.apis.result import (
     Result,
     ResultApi,
     ResultDetailApi,
+)
+from defect_generator.defects.apis.result_image import (
+    ResultImageApi,
+    ResultImageDetailApi,
 )
 
 app_name = "defects"
@@ -34,10 +37,6 @@ image_patterns = [
     path("<int:image_id>/", ImageDetailApi.as_view(), name="images-detail"),
 ]
 
-inference_patterns = [
-    path("", InferenceApi.as_view(), name="inference"),
-]
-
 generate_patterns = [
     path("", GenerateApi.as_view(), name="generate"),
 ]
@@ -51,12 +50,18 @@ result_patterns = [
     path("<int:result_id>/", ResultDetailApi.as_view(), name="result-detail"),
 ]
 
+result_images_patterns = [
+    path("", ResultImageApi.as_view(), name="result-images"),
+    path("<int:result_image_id>/", ResultImageDetailApi.as_view(), name="result-image-detail"),
+]
+
 urlpatterns = [
     path("types/", include((defect_type_patterns, "defect-types"))),
     path("images/", include((image_patterns, "images"))),
     path("models/", include((defect_model_patterns, "models"))),
-    path("inference/", include((inference_patterns, "inferences"))),
+    # path("inference/", include((inference_patterns, "inferences"))),
     path("generate/", include((generate_patterns, "generates"))),
     path("fine_tune/", include((fine_tune_patterns, "fine_tunes"))),
     path("results/", include((result_patterns, "results"))),
+    path("result-images/", include((result_images_patterns, "results-images"))),
 ]
