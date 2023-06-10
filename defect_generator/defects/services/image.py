@@ -93,7 +93,7 @@ class ImageUploadService:
             image.file = image_file
             image.file.name = f"images/img_{image.id}.{image_ext}"
             image.mask_file = mask_image_file
-            image.mask_file.name = f"masks/mask_{image.id}.{image_ext}"
+            image.mask_file.name = f"masks/mask_{image.id}.{mask_ext}"
             image.save(update_fields=["file", "mask_file"])
 
         storage.delete(file_name)
