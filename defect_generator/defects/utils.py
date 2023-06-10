@@ -68,7 +68,7 @@ def download_file(url: str, file_name: str):
 
 
 def get_real_url(url: str) -> str:
-    real_host: str = f"{env('HOST_URL')}:9000"
+    real_host: str = f"{env('PUBLIC_MINIO_HOST')}:{env('PUBLIC_MINIO_PORT')}"
     new_url: str = ""
     for part in url.split("/")[3:]:
         new_url += f"{part}/"
