@@ -67,12 +67,12 @@ class GenerateCeleryService:
 
             defect_model = DefectModel.objects.get(id=defect_model_id)
 
-            model_url = get_real_url(defect_model.file.url)
+            # model_url = get_real_url(defect_model.file.url)
 
             requests.post(
                 "http://inference_web:8000/inference/",
                 data={
-                    "model_url": model_url,
+                    "model_url": defect_model.file.url,
                     "number_of_images": number_of_images,
                     "defect_type_id": defect_type_id,
                     "defect_model_id": defect_model_id,
