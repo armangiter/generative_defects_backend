@@ -7,7 +7,7 @@ import requests
 
 import PIL
 
-from defect_generator.defects.models import DefectModel
+from defect_generator.defects.models import DefectModel, DefectType
 from defect_generator.defects.tasks.generate import generate as generate_task
 from defect_generator.defects.utils import (
     get_real_url,
@@ -66,6 +66,7 @@ class GenerateCeleryService:
             mask_image_file = File(mask_file, name=mask_file.name)
 
             defect_model = DefectModel.objects.get(id=defect_model_id)
+            defect_type = DefectType.objects.filter(id=defect_type_id).only("name").get()
 
             # model_url = get_real_url(defect_model.file.url)
 
@@ -76,6 +77,7 @@ class GenerateCeleryService:
                     "number_of_images": number_of_images,
                     "defect_type_id": defect_type_id,
                     "defect_model_id": defect_model_id,
+                    "defect_type_name": defect_type.name,
                 },
                 files={"image_file": image_file, "mask_file": mask_image_file},
             )
