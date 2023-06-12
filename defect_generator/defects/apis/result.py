@@ -24,9 +24,12 @@ class ResultApi(APIView):
                 fields = ["id", "file"]
 
             def get_file(self, obj: ResultImage):
-                return get_real_url(obj.file.url)
+                if bool(obj.file) is True:
+                    return get_real_url(obj.file.url)
+                return None
 
         result_images = ResultImageSerializer(many=True)
+        image = serializers.SerializerMethodField()
 
         class Meta:
             model = Result
@@ -39,6 +42,11 @@ class ResultApi(APIView):
                 "result_images",
                 "created",
             )
+
+        def get_image(self, obj: Result):
+            if bool(obj.image) is True:
+                return get_real_url(obj.image.url)
+            return None
 
     @extend_schema(request=ResultInputSerializer)
     def post(self, request):
