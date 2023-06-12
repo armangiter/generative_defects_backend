@@ -39,7 +39,7 @@ def results_file_generate_upload_path(instance, filename):
 
 def result_images_file_generate_upload_path(instance, filename):
     # file_new_name = file_generate_name(original_file_name=filename)
-    return f"result_images/{os.path.basename(filename)}"
+    return f"result_images/result_{instance.result_id}/{os.path.basename(filename)}"
 
 
 def download_file(url: str, file_name: str):

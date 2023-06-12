@@ -61,12 +61,7 @@ class ResultImageCeleryService:
                 logger.info(f"Uploading file: {file.name} ....")
 
                 result_image_file = File(file, name=file.name)
-                result_image = ResultImage.objects.create(result_id=result_id, file=result_image_file)
-    
-                # result_images.append(result_image)
-
-        # create all result images at once
-        # ResultImage.objects.bulk_create(result_images)
+                ResultImage.objects.create(result_id=result_id, file=result_image_file)
 
         for file_name in files_name:
             storage.delete(file_name)
