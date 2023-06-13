@@ -7,8 +7,8 @@ from defect_generator.defects.models import DefectType
 class DefectTypeService:
 
     @staticmethod
-    def defect_type_create(*, name: str) -> None:
-        DefectType.objects.create(name=name)
+    def defect_type_create(*, name: str, command: str) -> None:
+        DefectType.objects.create(name=name, command=command)
     
     @staticmethod
     def defect_type_list(*, filters=None) -> QuerySet[DefectType]:
@@ -19,8 +19,8 @@ class DefectTypeService:
         return DefectType.objects.get(id=id)
     
     @staticmethod
-    def defect_type_update(*, type_id: int, name: str) -> None:
-        DefectType.objects.filter(id=type_id).update(name=name)
+    def defect_type_update(*, type_id: int, name: str, command: str) -> None:
+        DefectType.objects.filter(id=type_id).update(name=name, command=command)
 
     @staticmethod
     def defect_type_delete(*, type_id: int) -> None:
