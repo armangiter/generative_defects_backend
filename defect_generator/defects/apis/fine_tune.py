@@ -12,3 +12,11 @@ class FineTuneApi(APIView):
     def post(self, request):
         FineTuneService.fine_tune()
         return Response(status=status.HTTP_200_OK)
+    
+
+# [GET] api/generate/status
+class FineTuneStatusApi(APIView):
+    def get(self, request):
+        response = FineTuneService.get_fine_tune_status()
+
+        return Response({"status": response}, status=status.HTTP_200_OK)

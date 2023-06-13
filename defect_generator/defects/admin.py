@@ -14,6 +14,7 @@ class DefectTypeAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "name",
+        "command",
     )
 
 
@@ -36,7 +37,7 @@ class DefectModelAdmin(admin.ModelAdmin):
 
 
 @admin.register(Result)
-class InferenceAdmin(admin.ModelAdmin):
+class ResultAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "image",

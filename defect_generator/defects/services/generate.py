@@ -84,7 +84,7 @@ class GenerateCeleryService:
                     "number_of_images": number_of_images,
                     "defect_type_id": defect_type_id,
                     "defect_model_id": defect_model_id,
-                    "defect_type_name": defect_type.name,
+                    "defect_type_name": defect_type.command,
                 },
                 files={"image_file": image_file, "mask_file": mask_image_file},
             )

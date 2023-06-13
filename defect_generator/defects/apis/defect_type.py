@@ -11,11 +11,12 @@ from defect_generator.defects.services.defect_type import DefectTypeService
 class DefectTypeApi(APIView):
     class DefectTypeInputSerializer(serializers.Serializer):
         name = serializers.CharField(max_length=127)
+        command = serializers.CharField(max_length=512)
 
     class DefectTypeOutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = DefectType
-            fields = ("id", "name",)
+            fields = ("id", "name", "command")
 
     @extend_schema(request=DefectTypeInputSerializer)
     def post(self, request):
@@ -42,11 +43,12 @@ class DefectTypeApi(APIView):
 class DefectTypeDetailApi(APIView):
     class DefectTypeDetailInputSerializer(serializers.Serializer):
         name = serializers.CharField(max_length=127)
+        command = serializers.CharField(max_length=512)
 
     class DefectTypeDetailOutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = DefectType
-            fields = ("id", "name",)
+            fields = ("id", "name", "command")
 
     @extend_schema(responses=DefectTypeDetailOutputSerializer)
     def get(self, request, type_id):
