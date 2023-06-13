@@ -26,3 +26,11 @@ class GenerateApi(APIView):
         GenerateService.generate(**serializer.validated_data)
 
         return Response(status=status.HTTP_200_OK)
+
+
+# [GET] api/generate/status
+class GenerateStatusApi(APIView):
+    def get(self, request):
+        response = GenerateService.get_generate_status()
+
+        return Response({"status": response}, status=status.HTTP_200_OK)

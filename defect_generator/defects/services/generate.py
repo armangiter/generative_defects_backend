@@ -20,6 +20,11 @@ logger = logging.getLogger(__name__)
 
 class GenerateService:
     @staticmethod
+    def get_generate_status() -> str:
+        response = requests.get("http://inference_web:8000/status").json()
+        return response["status"]
+
+    @staticmethod
     def generate(
         *,
         image_file: File,
@@ -66,7 +71,9 @@ class GenerateCeleryService:
             mask_image_file = File(mask_file, name=mask_file.name)
 
             defect_model = DefectModel.objects.get(id=defect_model_id)
-            defect_type = DefectType.objects.filter(id=defect_type_id).only("name").get()
+            defect_type = (
+                DefectType.objects.filter(id=defect_type_id).only("name").get()
+            )
 
             # model_url = get_real_url(defect_model.file.url)
 

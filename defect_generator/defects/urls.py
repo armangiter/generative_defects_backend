@@ -4,7 +4,7 @@ from defect_generator.defects.apis.defect_model import (
     DefectModelDetailApi,
 )
 from defect_generator.defects.apis.fine_tune import FineTuneApi
-from defect_generator.defects.apis.generate import GenerateApi
+from defect_generator.defects.apis.generate import GenerateApi, GenerateStatusApi
 
 from defect_generator.defects.apis.image import ImageApi, ImageDetailApi
 from defect_generator.defects.apis.defect_type import DefectTypeApi, DefectTypeDetailApi
@@ -39,6 +39,7 @@ image_patterns = [
 
 generate_patterns = [
     path("", GenerateApi.as_view(), name="generate"),
+    path("status/", GenerateStatusApi.as_view(), name="generate-status"),
 ]
 
 fine_tune_patterns = [
