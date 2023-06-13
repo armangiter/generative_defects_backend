@@ -14,7 +14,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "generative",
-    "153.156.254.150"
+    "153.156.254.150",
 ]
 
 
@@ -72,9 +72,9 @@ CORS_ALLOWED_ORIGINS = [
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
-    ]
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.BasicAuthentication",
+    ],
 }
 
 ROOT_URLCONF = "config.urls"
@@ -157,10 +157,10 @@ MINIO_SECRET_KEY = env("MINIO_ROOT_PASSWORD")
 MINIO_BUCKET_NAME = env("MINIO_BUCKET_NAME")
 MINIO_ENDPOINT = env("MINIO_ENDPOINT")
 
-FILE_MAX_SIZE = env.int("FILE_MAX_SIZE", default=10485760*20)  # 100 MiB
+FILE_MAX_SIZE = env.int("FILE_MAX_SIZE", default=10485760 * 20)  # 100 MiB
 FILE_UPLOAD_STORAGE = env("FILE_UPLOAD_STORAGE")
 
-FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600 # 100 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
 
 if FILE_UPLOAD_STORAGE == "LOCAL":
     MEDIA_URL = f"/{MEDIA_ROOT_NAME}/"
@@ -185,6 +185,14 @@ CELERY_BROKER_URL = env("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND")
 CELERY_TIMEZONE = "UTC"
 
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": env("CACHE_LOCATION"),
+        "TIMEOUT": 604800,  # 7 days
+    }
+}
 
 LOGGING = {
     "version": 1,

@@ -3,8 +3,8 @@ from defect_generator.defects.apis.defect_model import (
     DefectModelApi,
     DefectModelDetailApi,
 )
-from defect_generator.defects.apis.fine_tune import FineTuneApi, FineTuneStatusApi
-from defect_generator.defects.apis.generate import GenerateApi, GenerateStatusApi
+from defect_generator.defects.apis.fine_tune import FineTuneApi, FineTuneFinishApi, FineTuneStatusApi
+from defect_generator.defects.apis.generate import GenerateApi, GenerateFinishApi, GenerateStatusApi
 
 from defect_generator.defects.apis.image import ImageApi, ImageDetailApi
 from defect_generator.defects.apis.defect_type import DefectTypeApi, DefectTypeDetailApi
@@ -40,11 +40,14 @@ image_patterns = [
 generate_patterns = [
     path("", GenerateApi.as_view(), name="generate"),
     path("status/", GenerateStatusApi.as_view(), name="generate-status"),
+    path("finish/", GenerateFinishApi.as_view(), name="generate-finish"),
 ]
 
 fine_tune_patterns = [
     path("", FineTuneApi.as_view(), name="fine-tune"),
     path("status/", FineTuneStatusApi.as_view(), name="fine-tune-status"),
+    path("finish/", FineTuneFinishApi.as_view(), name="fine-tune-finish"),
+
 ]
 
 result_patterns = [

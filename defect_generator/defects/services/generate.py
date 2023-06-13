@@ -3,9 +3,9 @@ from pathlib import Path
 
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
-import requests
+from django.core.cache import cache
 
-import PIL
+import requests
 
 from defect_generator.defects.models import DefectModel, DefectType
 from defect_generator.defects.tasks.generate import generate as generate_task
@@ -21,8 +21,14 @@ logger = logging.getLogger(__name__)
 class GenerateService:
     @staticmethod
     def get_generate_status() -> str:
-        response = requests.get("http://inference_web:8000/status").json()
-        return response["status"]
+        response = "generating" if cache.get("generate-lock") else "ready"
+        return response
+    
+    @staticmethod
+    def finish_generate() -> str:
+        # release the lock
+        cache.set("generate-lock", False)
+
 
     @staticmethod
     def generate(
@@ -34,6 +40,14 @@ class GenerateService:
         mask_mode: str,
         number_of_images: int,
     ) -> None:
+        
+        lock = cache.get("generate-lock")
+        if lock:
+            return False
+        
+        # lock the generate
+        cache.set("generate-lock", True)
+        
         file_path = write_file_to_disk(file=image_file)
         mask_file_path = write_file_to_disk(file=mask_file)
 
@@ -45,6 +59,8 @@ class GenerateService:
             mask_mode,
             number_of_images,
         )
+
+        return True
 
 
 class GenerateCeleryService:

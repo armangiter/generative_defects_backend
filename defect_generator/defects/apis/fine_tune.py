@@ -10,8 +10,12 @@ from defect_generator.defects.services.fine_tune import FineTuneService
 class FineTuneApi(APIView):
 
     def post(self, request):
-        FineTuneService.fine_tune()
-        return Response(status=status.HTTP_200_OK)
+        response = FineTuneService.fine_tune()
+        if not response:
+            return Response(
+                {"status": "already training"}, status=status.HTTP_202_ACCEPTED
+            )
+        return Response({"status": "train started"}, status=status.HTTP_202_OK)
     
 
 # [GET] api/generate/status
@@ -20,3 +24,10 @@ class FineTuneStatusApi(APIView):
         response = FineTuneService.get_fine_tune_status()
 
         return Response({"status": response}, status=status.HTTP_200_OK)
+    
+# [POST] api/generate/finish
+class FineTuneFinishApi(APIView):
+    def post(self, request):
+        FineTuneService.finish_fine_tune()
+
+        return Response({"status": "train finished"}, status=status.HTTP_200_OK)
