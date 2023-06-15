@@ -5,6 +5,7 @@ from drf_spectacular.utils import extend_schema
 
 from defect_generator.defects.models import DefectModel
 from defect_generator.defects.services.defect_model import DefectModelService
+from defect_generator.defects.utils import get_real_url
 
 
 # [POST, GET] api/defects/models/
@@ -16,6 +17,11 @@ class DefectModelApi(APIView):
         class Meta:
             model = DefectModel
             fields = ("id", "name", "file",)
+        
+        def get_file(self, obj: DefectModel):
+            if bool(obj.file) is True:
+                return get_real_url(obj.file.url)
+            return None
 
     @extend_schema(request=DefectModelInputSerializer)
     def post(self, request):
