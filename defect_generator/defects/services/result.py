@@ -33,7 +33,7 @@ class ResultService:
 
     @staticmethod
     def result_list(*, filters=None) -> QuerySet[Image]:
-        return Result.objects.prefetch_related("result_images").all()
+        return Result.objects.prefetch_related("result_images").all().order_by("-id")
 
     @staticmethod
     def result_get(*, id: int, filters=None) -> Image:
