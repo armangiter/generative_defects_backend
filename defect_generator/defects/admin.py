@@ -15,6 +15,7 @@ class DefectTypeAdmin(admin.ModelAdmin):
         "id",
         "name",
         "command",
+        "defect_model_id",
     )
 
 
@@ -54,4 +55,3 @@ class ResultImageAdmin(admin.ModelAdmin):
         "result_id",
         "file",
     )
-

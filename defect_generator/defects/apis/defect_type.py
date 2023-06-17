@@ -9,6 +9,9 @@ from defect_generator.defects.services.defect_type import DefectTypeService
 
 # [POST, GET] api/defects/types/
 class DefectTypeApi(APIView):
+    class DefectTypeFilterSerializer(serializers.Serializer):
+        defect_model_id = serializers.IntegerField(min_value=1)
+
     class DefectTypeInputSerializer(serializers.Serializer):
         name = serializers.CharField(max_length=127)
         command = serializers.CharField(max_length=512)
@@ -16,7 +19,7 @@ class DefectTypeApi(APIView):
     class DefectTypeOutputSerializer(serializers.ModelSerializer):
         class Meta:
             model = DefectType
-            fields = ("id", "name", "command")
+            fields = ("id", "name", "command", "defect_model_id")
 
     @extend_schema(request=DefectTypeInputSerializer)
     def post(self, request):
@@ -30,9 +33,19 @@ class DefectTypeApi(APIView):
 
         return Response(status=status.HTTP_201_CREATED)
 
-    @extend_schema(responses=DefectTypeOutputSerializer)
+    @extend_schema(
+        parameters=[DefectTypeFilterSerializer], responses=DefectTypeOutputSerializer
+    )
     def get(self, request):
-        query = DefectTypeService.defect_type_list()
+        filters = None
+        if request.query_params:
+            filters_serializer = self.DefectTypeFilterSerializer(
+                data=request.query_params
+            )
+            filters_serializer.is_valid(raise_exception=True)
+            filters = filters_serializer.validated_data
+
+        query = DefectTypeService.defect_type_list(filters=filters)
 
         serializer = self.DefectTypeOutputSerializer(query, many=True)
 
@@ -58,7 +71,10 @@ class DefectTypeDetailApi(APIView):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @extend_schema(request=DefectTypeDetailInputSerializer, responses=DefectTypeDetailOutputSerializer)
+    @extend_schema(
+        request=DefectTypeDetailInputSerializer,
+        responses=DefectTypeDetailOutputSerializer,
+    )
     def put(self, request, type_id):
         serializer = self.DefectTypeDetailInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

@@ -7,14 +7,6 @@ from defect_generator.defects.utils import (
 )
 
 
-class DefectType(models.Model):
-    name = models.CharField(max_length=127)
-    command = models.CharField(max_length=512)
-
-    def __str__(self) -> str:
-        return f"{self.id}, {self.name}"
-
-
 class DefectModel(models.Model):
     name = models.CharField(max_length=127)
     file = models.FileField(
@@ -26,6 +18,17 @@ class DefectModel(models.Model):
 
     def __str__(self) -> str:
         return f"{self.id}, {self.file.name}"
+
+
+class DefectType(models.Model):
+    name = models.CharField(max_length=127)
+    command = models.CharField(max_length=512)
+    defect_model = models.ForeignKey(
+        DefectModel, on_delete=models.SET_NULL, null=True, blank=True, default=None
+    )
+
+    def __str__(self) -> str:
+        return f"{self.id}, {self.name}"
 
 
 class Image(models.Model):
