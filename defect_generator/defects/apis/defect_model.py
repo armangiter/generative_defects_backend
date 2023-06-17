@@ -14,10 +14,12 @@ class DefectModelApi(APIView):
         file = serializers.FileField()
 
     class DefectModelOutputSerializer(serializers.ModelSerializer):
+        file = serializers.SerializerMethodField()
+
         class Meta:
             model = DefectModel
-            fields = ("id", "name", "file",)
-        
+            fields = ("id", "name", "file")
+
         def get_file(self, obj: DefectModel):
             if bool(obj.file) is True:
                 return get_real_url(obj.file.url)
@@ -43,15 +45,23 @@ class DefectModelApi(APIView):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-# [GET, DELETE] api/defects/types/{type_id}/
+
+# [GET, DELETE] api/defects/models/{model_id}/
 class DefectModelDetailApi(APIView):
     class DefectModelDetailInputSerializer(serializers.Serializer):
         name = serializers.CharField(max_length=127)
 
     class DefectModelDetailOutputSerializer(serializers.ModelSerializer):
+        file = serializers.SerializerMethodField()
+
         class Meta:
             model = DefectModel
             fields = ("id", "name", "file")
+
+        def get_file(self, obj: DefectModel):
+            if bool(obj.file) is True:
+                return get_real_url(obj.file.url)
+            return None
 
     @extend_schema(responses=DefectModelDetailOutputSerializer)
     def get(self, request, model_id):
