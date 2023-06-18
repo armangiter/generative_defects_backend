@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import serializers, status
 from drf_spectacular.utils import extend_schema
+from defect_generator.api.utils import inline_serializer
 
 from defect_generator.defects.models import Result, ResultImage
 from defect_generator.defects.services.result import ResultService
@@ -29,6 +30,12 @@ class ResultApi(APIView):
                 return None
 
         result_images = ResultImageSerializer(many=True)
+        defect_type = inline_serializer(
+            fields={
+                "id": serializers.IntegerField(),
+                "name": serializers.CharField(),
+            }
+        )
         image = serializers.SerializerMethodField()
 
         class Meta:
@@ -36,8 +43,7 @@ class ResultApi(APIView):
             fields = (
                 "id",
                 "image",
-                # "mask_image",
-                "defect_type_id",
+                "defect_type",
                 "defect_model_id",
                 "result_images",
                 "created",

@@ -64,7 +64,6 @@ urlpatterns = [
     path("types/", include((defect_type_patterns, "defect-types"))),
     path("images/", include((image_patterns, "images"))),
     path("models/", include((defect_model_patterns, "models"))),
-    # path("inference/", include((inference_patterns, "inferences"))),
     path("generate/", include((generate_patterns, "generates"))),
     path("fine_tune/", include((fine_tune_patterns, "fine_tunes"))),
     path("results/", include((result_patterns, "results"))),
