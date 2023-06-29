@@ -46,6 +46,7 @@ class ResultApi(APIView):
                 "defect_type",
                 "defect_model_id",
                 "result_images",
+                "used",
                 "created",
             )
 

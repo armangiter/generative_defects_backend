@@ -80,6 +80,7 @@ class Result(TimeStamp):
     defect_model = models.ForeignKey(
         DefectModel, on_delete=models.CASCADE, related_name="results"
     )
+    used = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return f"{self.id}"

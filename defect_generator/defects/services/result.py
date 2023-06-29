@@ -7,7 +7,7 @@ from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 
 
-from defect_generator.defects.models import Image, Result, ResultImage
+from defect_generator.defects.models import Result, ResultImage
 from defect_generator.defects.tasks.result import result_create as result_create_task
 from defect_generator.defects.utils import write_file_to_disk
 
@@ -32,16 +32,19 @@ class ResultService:
         return result
 
     @staticmethod
-    def result_list(*, filters=None) -> QuerySet[Image]:
-        return (
+    @transaction.atomic
+    def result_list(*, filters=None) -> QuerySet[Result]:
+        queryset = (
             Result.objects.prefetch_related("result_images")
             .select_related("defect_type")
-            .all()
+            .filter(used=False)
             .order_by("-id")
         )
+        Result.objects.all().update(used=True)
+        return queryset
 
     @staticmethod
-    def result_get(*, id: int, filters=None) -> Image:
+    def result_get(*, id: int, filters=None) -> Result:
         return Result.objects.prefetch_related("result_images").get(id=id)
 
     @staticmethod
