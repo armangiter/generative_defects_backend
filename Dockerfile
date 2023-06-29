@@ -39,6 +39,6 @@ RUN pip install --upgrade pip && \
 
 COPY . .
 
-RUN chmod +x /app/scripts/web_entrypoint.sh
+RUN chmod +x /app/entrypoints/web_entrypoint.sh
 
 EXPOSE 8000
