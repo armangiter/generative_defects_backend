@@ -30,7 +30,6 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "drf_spectacular",
     "django_extensions",
-    "debug_toolbar",
     # http://whitenoise.evans.io/en/stable/django.html#using-whitenoise-in-development
     "whitenoise.runserver_nostatic",
 ]
@@ -46,10 +45,7 @@ INSTALLED_APPS = [
     *LOCAL_APPS,
 ]
 
-DEBUG_TOOLBAR_CONFIG = {"SHOW_TOOLBAR_CALLBACK": lambda request: True}
-
 MIDDLEWARE = [
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -132,8 +128,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "Asia/Tokyo"
-
 USE_I18N = True
 
 USE_TZ = True
@@ -206,7 +200,7 @@ LOGGING = {
         "console": {"class": "logging.StreamHandler", "formatter": "verbose"},
     },
     "loggers": {
-        "api": {
+        "app": {
             "handlers": ["console"],
             "level": os.environ.get("DJANGO_LOG_LEVEL", "DEBUG"),
         },
