@@ -38,7 +38,7 @@ services:
       - .env
     command: 'minio server /minio_files --console-address ":9001"'
     ports:
-      - "9000:9000"
+      - "81:9000"
       - "9001:9001"
     networks:
       - generative-network
