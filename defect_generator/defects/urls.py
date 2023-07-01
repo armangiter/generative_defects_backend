@@ -9,7 +9,6 @@ from defect_generator.defects.apis.generate import GenerateApi, GenerateFinishAp
 from defect_generator.defects.apis.image import ImageApi, ImageDetailApi
 from defect_generator.defects.apis.defect_type import DefectTypeApi, DefectTypeDetailApi
 from defect_generator.defects.apis.result import (
-    Result,
     ResultApi,
     ResultDetailApi,
 )

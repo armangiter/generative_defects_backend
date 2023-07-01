@@ -5,6 +5,8 @@ from django.db import transaction
 from django.db.models import QuerySet
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
+from defect_generator.common.types import DjangoModelType
+from defect_generator.defects.filters import ResultFilter
 
 
 from defect_generator.defects.models import Result, ResultImage
@@ -32,16 +34,18 @@ class ResultService:
         return result
 
     @staticmethod
-    @transaction.atomic
-    def result_list(*, filters=None) -> QuerySet[Result]:
+    def result_list(*, user, filters=None) -> QuerySet[Result]:
         queryset = (
             Result.objects.prefetch_related("result_images")
             .select_related("defect_type")
-            .filter(used=False)
             .order_by("-id")
+            .filter(user=user)
         )
-        Result.objects.all().update(used=True)
-        return queryset
+
+        if filters is None:
+            filters = {}
+
+        return ResultFilter(filters, queryset=queryset).qs
 
     @staticmethod
     def result_get(*, id: int, filters=None) -> Result:

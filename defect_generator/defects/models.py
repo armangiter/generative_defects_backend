@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 from defect_generator.common.models import TimeStamp
 from defect_generator.defects.utils import (
@@ -61,6 +62,15 @@ class Image(models.Model):
 
 
 class Result(TimeStamp):
+    STATUS_PENDING = "p"
+    STATUS_GENERATING = "g"
+    STATUS_FINISHED = "f"
+
+    STATUS_CHOICES = (
+        (STATUS_PENDING, "Pending"),
+        (STATUS_GENERATING, "Generating"),
+        (STATUS_FINISHED, "Finished"),
+    )
     # keep track of image sent for generate which is came from inference backbone
     image = models.FileField(
         upload_to=results_file_generate_upload_path,
@@ -74,7 +84,11 @@ class Result(TimeStamp):
     defect_model = models.ForeignKey(
         DefectModel, on_delete=models.CASCADE, related_name="results"
     )
-    used = models.BooleanField(default=False)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="results"
+    )
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    # used = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return f"{self.id}"

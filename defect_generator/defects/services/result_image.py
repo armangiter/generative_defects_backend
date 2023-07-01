@@ -1,19 +1,14 @@
-import logging, os
+import logging
 from pathlib import Path
 
-from django.conf import settings
 from django.db import transaction
 from django.db.models import QuerySet
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
 
-from defect_generator.defects.models import Image, ResultImage
-from defect_generator.defects.tasks.images import (
-    upload_image as upload_image_task,
-    update_image as update_image_task,
-)
+from defect_generator.defects.models import ResultImage
 from defect_generator.defects.tasks.result_image import result_image_create
-from defect_generator.defects.utils import get_file_extension, write_file_to_disk
+from defect_generator.defects.utils import write_file_to_disk
 
 
 logger = logging.getLogger(__name__)

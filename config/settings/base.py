@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 from pathlib import Path
 
@@ -5,7 +6,7 @@ from config.env import BASE_DIR, env
 
 env.read_env(os.path.join(BASE_DIR, ".env"))
 
-SECRET_KEY = "django-insecure-3nff8m$d$ih#^+^+%7yafv2_2u9tvspoiqpdop_1(ccc86&p)-"
+SECRET_KEY = env.str("SECRET_KEY")
 
 DEBUG = True
 
@@ -80,6 +81,8 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.BasicAuthentication",
     ],
 }
+
+SIMPLE_JWT = {"ACCESS_TOKEN_LIFETIME": timedelta(days=1)}
 
 ROOT_URLCONF = "config.urls"
 

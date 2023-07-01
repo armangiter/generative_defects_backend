@@ -38,7 +38,6 @@ class ResultAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "image",
-        "used",
         "defect_type_id",
         "defect_model_id",
     )

@@ -1,41 +1,22 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import serializers, status
+from rest_framework import status
 from drf_spectacular.utils import extend_schema
 
-from defect_generator.defects.models import Image
 from defect_generator.defects.services.image import ImageService
-from defect_generator.defects.utils import get_real_url
+from defect_generator.defects.serializers.image import (
+    ImageInputSerializer,
+    ImageOutputSerializer,
+    ImageDetailInputSerializer,
+    ImageDetailOutputSerializer,
+)
 
 
 # [POST, GET] api/defects/images/
 class ImageApi(APIView):
-    class ImageInputSerializer(serializers.Serializer):
-        file = serializers.FileField()
-        mask_file = serializers.FileField()
-        defect_type_id = serializers.IntegerField()
-
-    class ImageOutputSerializer(serializers.ModelSerializer):
-        file = serializers.SerializerMethodField()
-        mask_file = serializers.SerializerMethodField()
-
-        class Meta:
-            model = Image
-            fields = ("id", "file", "mask_file", "defect_type")
-
-        def get_file(self, obj: Image):
-            if bool(obj.file) is True:
-                return get_real_url(obj.file.url)
-            return None
-        
-        def get_mask_file(self, obj: Image):
-            if bool(obj.mask_file) is True:
-                return get_real_url(obj.mask_file.url)
-            return None
-
     @extend_schema(request=ImageInputSerializer)
     def post(self, request):
-        serializer = self.ImageInputSerializer(data=request.data)
+        serializer = ImageInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:
@@ -49,54 +30,31 @@ class ImageApi(APIView):
     def get(self, request):
         query = ImageService.image_list()
 
-        serializer = self.ImageOutputSerializer(query, many=True)
+        serializer = ImageOutputSerializer(query, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 # [GET, DELETE] api/defects/images/{image_id}/
 class ImageDetailApi(APIView):
-    class ImageDetailInputSerializer(serializers.Serializer):
-        file = serializers.FileField()
-        mask_file = serializers.FileField()
-        defect_type_id = serializers.IntegerField()
-
-    class ImageDetailOutputSerializer(serializers.ModelSerializer):
-        file = serializers.SerializerMethodField()
-        mask_file = serializers.SerializerMethodField()
-
-        class Meta:
-            model = Image
-            fields = ("id", "file", "mask_file", "defect_type")
-
-        def get_file(self, obj: Image):
-            if bool(obj.file) is True:
-                return get_real_url(obj.file.url)
-            return None
-        
-        def get_mask_file(self, obj: Image):
-            if bool(obj.mask_file) is True:
-                return get_real_url(obj.mask_file.url)
-            return None
-
     @extend_schema(responses=ImageDetailOutputSerializer)
     def get(self, request, image_id):
         image = ImageService.image_get(id=image_id)
 
-        serializer = self.ImageDetailOutputSerializer(image)
+        serializer = ImageDetailOutputSerializer(image)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
     @extend_schema(request=ImageDetailInputSerializer)
     def put(self, request, image_id):
-        serializer = self.ImageDetailInputSerializer(data=request.data)
+        serializer = ImageDetailInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:
             ImageService.image_update(image_id=image_id, **serializer.validated_data)
         except Exception as ex:
             return Response(f"Error {ex}", status=status.HTTP_400_BAD_REQUEST)
-        
+
         return Response(status=status.HTTP_200_OK)
 
     def delete(self, request, image_id):
