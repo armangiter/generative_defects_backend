@@ -21,6 +21,7 @@ services:
       - inference-network
 
   db:
+    container_name: generative_defects_db
     image: postgres:14.6
     env_file:
       - .env
@@ -30,6 +31,7 @@ services:
       - generative-network
 
   minio:
+    container_name: generative_defects_minio
     image: minio/minio
     hostname: "minio"
     volumes:
@@ -45,6 +47,7 @@ services:
       - minio-network
 
   celery:
+    container_name: generative_defects_celery
     build: .
     command: celery -A defect_generator.tasks worker -l info --without-gossip --without-mingle --without-heartbeat
     volumes:
@@ -59,6 +62,7 @@ services:
       - inference-network
       
   redis:
+    container_name: generative_defects_redis
     restart: always
     image: redis:6.2.11-alpine
     expose:

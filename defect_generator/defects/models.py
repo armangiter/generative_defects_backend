@@ -1,5 +1,6 @@
 from django.db import models
 
+from defect_generator.common.models import TimeStamp
 from defect_generator.defects.utils import (
     defect_models_file_generate_upload_path,
     result_images_file_generate_upload_path,
@@ -57,13 +58,6 @@ class Image(models.Model):
 
     def __str__(self) -> str:
         return f"{self.id}, {self.file.name}"
-
-
-class TimeStamp(models.Model):
-    created = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        abstract = True
 
 
 class Result(TimeStamp):

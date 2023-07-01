@@ -19,9 +19,12 @@ ALLOWED_HOSTS = [
 
 
 LOCAL_APPS = [
+    "defect_generator.api.apps.ApiConfig",
+    "defect_generator.authentication.apps.AuthenticationConfig",
+    "defect_generator.common.apps.CommonConfig",
     "defect_generator.defects.apps.DefectsConfig",
     "defect_generator.integrations.apps.IntegrationsConfig",
-    "defect_generator.api.apps.ApiConfig",
+    "defect_generator.users.apps.UsersConfig",
 ]
 
 THIRD_PARTY_APPS = [
@@ -125,6 +128,8 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+AUTH_USER_MODEL = "users.User"
 
 LANGUAGE_CODE = "en-us"
 
