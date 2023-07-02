@@ -5,7 +5,7 @@ from drf_spectacular.utils import extend_schema
 from defect_generator.api.mixins import ApiAuthMixin
 
 from defect_generator.defects.services.generate import GenerateService
-from defect_generator.defects.serializers.generate import GenerateInputSerializer
+from defect_generator.defects.serializers.generate import GenerateFinishInputSerializer, GenerateInputSerializer
 
 
 # [POST] api/generate
@@ -15,13 +15,13 @@ class GenerateApi(ApiAuthMixin, APIView):
         serializer = GenerateInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        response = GenerateService.generate(
-            user=request.user, **serializer.validated_data
-        )
-        if not response:
-            return Response(
-                {"status": "already generating"}, status=status.HTTP_202_ACCEPTED
+        try:
+            GenerateService.generate(
+                user=request.user, **serializer.validated_data
             )
+        except Exception as ex:
+            return Response(f"Error {ex}", status=status.HTTP_400_BAD_REQUEST)
+    
         return Response({"status": "generate started"}, status=status.HTTP_202_ACCEPTED)
 
 
@@ -35,7 +35,11 @@ class GenerateStatusApi(APIView):
 
 # [POST] api/generate/finish
 class GenerateFinishApi(APIView):
+    @extend_schema(request=GenerateFinishInputSerializer)
     def post(self, request):
-        GenerateService.finish_generate()
+        serializer = GenerateFinishInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        GenerateService.finish_generate(**serializer.validated_data)
 
         return Response({"status": "generate finished"}, status=status.HTTP_200_OK)

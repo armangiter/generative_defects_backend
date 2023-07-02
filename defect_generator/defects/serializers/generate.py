@@ -10,3 +10,8 @@ class GenerateInputSerializer(serializers.Serializer):
         [("random", "Random"), ("in_paint", "In Paint")]
     )
     number_of_images = serializers.IntegerField()
+
+
+class GenerateFinishInputSerializer(serializers.Serializer):
+    result_id = serializers.IntegerField(min_value=1)
+    user_id = serializers.IntegerField(min_value=1)

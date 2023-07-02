@@ -33,12 +33,14 @@ def defect_models_file_generate_upload_path(instance, filename):
 
 
 def results_file_generate_upload_path(instance, filename):
-    # file_new_name = file_generate_name(original_file_name=filename)
-    return f"results/{os.path.basename(filename)}"
+    return f"results/images/{os.path.basename(filename)}"
+
+
+def results_mask_file_generate_upload_path(instance, filename):
+    return f"results/masks/{os.path.basename(filename)}"
 
 
 def result_images_file_generate_upload_path(instance, filename):
-    # file_new_name = file_generate_name(original_file_name=filename)
     return f"result_images/result_{instance.result_id}/{os.path.basename(filename)}"
 
 

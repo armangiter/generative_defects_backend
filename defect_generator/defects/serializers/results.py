@@ -13,6 +13,7 @@ class ResultFilterSerializer(serializers.Serializer):
 
 class ResultInputSerializer(serializers.Serializer):
     image = serializers.FileField()
+    mask = serializers.FileField()
     defect_type_id = serializers.IntegerField()
     defect_model_id = serializers.IntegerField()
 

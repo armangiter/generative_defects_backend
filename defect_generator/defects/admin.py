@@ -37,13 +37,14 @@ class DefectModelAdmin(admin.ModelAdmin):
 class ResultAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "image",
         "user_id",
         "defect_type_id",
         "defect_model_id",
         "status",
+        "number_of_images",
+        "mask_mode",
     )
-    list_filter = ("defect_type_id", "defect_model_id")
+    list_filter = ("user_id", "defect_type_id", "defect_model_id")
 
 
 @admin.register(ResultImage)

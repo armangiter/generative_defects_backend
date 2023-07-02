@@ -14,6 +14,8 @@ def result_create(
     self,
     file_path: str,
     file_name: str,
+    mask_path: str,
+    mask_name: str,
     result_id: int,
 ):
     logger.info("Start creating result...")
@@ -21,5 +23,9 @@ def result_create(
     from defect_generator.defects.services.result import ResultCeleryService
 
     ResultCeleryService.result_create(
-        file_path=file_path, file_name=file_name, result_id=result_id
+        file_path=file_path,
+        file_name=file_name,
+        mask_path=mask_path,
+        mask_name=mask_name,
+        result_id=result_id,
     )

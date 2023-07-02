@@ -15,6 +15,7 @@ def generate(
     defect_model_id: int,
     mask_mode: str,
     number_of_images: int,
+    result_id: int,
     user_id: int,
 ):
     from defect_generator.defects.services.generate import GenerateCeleryService
@@ -26,5 +27,6 @@ def generate(
         defect_model_id=defect_model_id,
         mask_mode=mask_mode,
         number_of_images=number_of_images,
+        result_id=result_id,
         user_id=user_id,
     )

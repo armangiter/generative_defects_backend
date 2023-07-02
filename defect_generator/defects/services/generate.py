@@ -1,15 +1,20 @@
-import logging, os
+import copy
+import logging
 from pathlib import Path
 
 from django.core.files import File
 from django.db import transaction
+from django.contrib.auth import get_user_model
 from django.core.files.storage import FileSystemStorage
 from django.core.cache import cache
 
 import requests
+
+from defect_generator.common.services import model_update
 from defect_generator.defects.exceptions import AlreadyGeneratingError
 
 from defect_generator.defects.models import DefectModel, DefectType, Result
+from defect_generator.defects.serializers.generate import GenerateInputSerializer
 from defect_generator.defects.tasks.generate import generate as generate_task
 from defect_generator.defects.utils import (
     get_real_url,
@@ -18,6 +23,7 @@ from defect_generator.defects.utils import (
 
 
 logger = logging.getLogger(__name__)
+User = get_user_model()
 
 
 class GenerateService:
@@ -27,14 +33,52 @@ class GenerateService:
         return response
 
     @staticmethod
-    def finish_generate() -> str:
-        # release the lock
-        cache.set("generate-lock", False)
+    def finish_generate(*, result_id: int, user_id: int) -> str:
+        # update status of generating result
+        print(f"updating result status of result {result_id}")
+        result = Result.objects.get(id=result_id)
+        result, has_updated = model_update(
+            instance=result, fields=["status"], data={"status": Result.STATUS_FINISHED}
+        )
+
+        pending_result_exists = Result.objects.filter(
+            status=Result.STATUS_PENDING
+        ).exists()
+        if not pending_result_exists:
+            raise AlreadyGeneratingError(
+                {"message": "there is no pending generate task."}
+            )
+
+        with transaction.atomic():
+            result = (
+                Result.objects.filter(status=Result.STATUS_PENDING)
+                .order_by("created")
+                .first()
+            )
+            print(f"there is a pending generate with result {result.id}")
+
+            print(f"calling the generate service again for result {result.id}")
+            user = User.objects.get(id=user_id)
+            data = {
+                "image_file": result.image,
+                "mask_file": result.mask,
+                "defect_type_id": result.defect_type_id,
+                "defect_model_id": result.defect_model_id,
+                "number_of_images": result.number_of_images,
+                "mask_mode": result.mask_mode,
+            }
+            serializer = GenerateInputSerializer(data=data)
+            serializer.is_valid(raise_exception=True)
+
+            print(result.id)
+            # generate the pending generate task
+            GenerateService.generate(user=user, result_id=result.id, **serializer.validated_data)
 
     @staticmethod
     def generate(
         *,
         user,
+        result_id: int = None,
         image_file: File,
         mask_file: File,
         defect_type_id: int,
@@ -42,35 +86,62 @@ class GenerateService:
         mask_mode: str,
         number_of_images: int,
     ) -> None:
-        # lock = cache.get("generate-lock")
-        # if lock:
-        #     return False
-
-        # # lock the generate
-        # cache.set("generate-lock", True)
-
+    
         generating_result_exists = Result.objects.filter(
             status=Result.STATUS_GENERATING
         ).exists()
         if generating_result_exists:
+            # put it on the queue to wait for generating task to be finished
+            Result.objects.create(
+                defect_model_id=defect_model_id,
+                defect_type_id=defect_type_id,
+                user_id=user.id,
+                image=image_file,
+                mask=mask_file,
+                number_of_images=number_of_images,
+                mask_mode=mask_mode,
+                status=Result.STATUS_PENDING,
+            )
             raise AlreadyGeneratingError(
                 {"message": "there is a generate task running already."}
             )
+        
+        with transaction.atomic():
+             # if this service called from generate_finish service
+            if result_id is not None:
+                result = Result.objects.get(id=result_id)
+                target_image_file = result.image
+                target_mask_file = result.mask
+            # if this service called for the first time
+            else:
+                target_image_file = copy.deepcopy(image_file)
+                target_mask_file = copy.deepcopy(mask_file)
+                # create a Result with pending status
+                result = Result.objects.create(
+                    defect_model_id=defect_model_id,
+                    defect_type_id=defect_type_id,
+                    user_id=user.id,
+                    image=image_file,
+                    mask=mask_file,
+                    number_of_images=number_of_images,
+                    mask_mode=mask_mode,
+                    status=Result.STATUS_PENDING,
+                )
 
-        file_path = write_file_to_disk(file=image_file)
-        mask_file_path = write_file_to_disk(file=mask_file)
+            file_path = write_file_to_disk(file=target_image_file)
+            mask_file_path = write_file_to_disk(file=target_mask_file)
 
-        generate_task.delay(
-            file_path,
-            mask_file_path,
-            defect_type_id,
-            defect_model_id,
-            mask_mode,
-            number_of_images,
-            user.id,
-        )
 
-        return True
+            generate_task.delay(
+                file_path,
+                mask_file_path,
+                defect_type_id,
+                defect_model_id,
+                mask_mode,
+                number_of_images,
+                result.id,
+                user.id,
+            )
 
 
 class GenerateCeleryService:
@@ -84,6 +155,7 @@ class GenerateCeleryService:
         defect_model_id: int,
         mask_mode: str,
         number_of_images: int,
+        result_id: int,
         user_id: int,
     ) -> None:
         storage = FileSystemStorage()
@@ -103,12 +175,9 @@ class GenerateCeleryService:
                 DefectType.objects.filter(id=defect_type_id).only("command").get()
             )
 
-            result = Result.objects.create(
-                defect_model=defect_model,
-                defect_type=defect_type,
-                user_id=user_id,
-                status=Result.STATUS_PENDING,
-            )
+            # set the result status "generating"
+            result = Result.objects.get(id=result_id)
+            model_update(instance=result, fields=["status"], data={"status": Result.STATUS_GENERATING})
 
             requests.post(
                 "http://inference_web:8000/inference/",
@@ -118,13 +187,11 @@ class GenerateCeleryService:
                     "defect_type_id": defect_type_id,
                     "defect_model_id": defect_model_id,
                     "instance_prompt": defect_type.command,
-                    "result_id": result.id,
+                    "result_id": result_id,
+                    "user_id": user_id,
                 },
                 files={"image_file": image_file, "mask_file": mask_image_file},
             )
-            # create a Result with pending status
-            result.image = image_file
-            result.save(update_fields=["image"])
 
             storage.delete(image_file.name)
             storage.delete(mask_image_file.name)

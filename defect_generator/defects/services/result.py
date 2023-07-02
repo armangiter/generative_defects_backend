@@ -20,9 +20,10 @@ logger = logging.getLogger(__name__)
 class ResultService:
     @staticmethod
     def result_create(
-        *, image: File, defect_type_id: int, defect_model_id: int
+        *, image: File, mask: File, defect_type_id: int, defect_model_id: int
     ) -> Result:
         file_path = write_file_to_disk(file=image)
+        mask_path = write_file_to_disk(file=mask)
 
         result = Result.objects.create(
             defect_type_id=defect_type_id,
@@ -30,7 +31,7 @@ class ResultService:
         )
 
         # calling celery task for uploading image field of result
-        result_create_task.delay(file_path, image.name, result.id)
+        result_create_task.delay(file_path, image.name, mask_path, mask.name, result.id)
         return result
 
     @staticmethod
@@ -63,17 +64,30 @@ class ResultService:
 class ResultCeleryService:
     @transaction.atomic
     @staticmethod
-    def result_create(*, file_path: str, file_name: str, result_id: int) -> None:
+    def result_create(
+        *,
+        file_path: str,
+        file_name: str,
+        mask_path: str,
+        mask_name: str,
+        result_id: int,
+    ) -> None:
         storage = FileSystemStorage()
         file_path_object = Path(file_path)
+        mask_path_object = Path(mask_path)
 
-        with file_path_object.open(mode="rb") as file:
+        with file_path_object.open(mode="rb") as file, mask_path_object.open(
+            mode="rb"
+        ) as mask_file:
             logger.info(f"Uploading file: {file.name} ....")
 
             image_file = File(file, name=file.name)
+            mask_image_file = File(mask_file, name=mask_file.name)
 
             result = Result.objects.get(id=result_id)
             result.image = image_file
-            result.save(update_fields=["image"])
+            result.mask = mask_image_file
+            result.save(update_fields=["image", "mask"])
 
         storage.delete(file_name)
+        storage.delete(mask_name)

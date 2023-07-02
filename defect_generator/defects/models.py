@@ -7,6 +7,7 @@ from defect_generator.defects.utils import (
     defect_models_file_generate_upload_path,
     result_images_file_generate_upload_path,
     results_file_generate_upload_path,
+    results_mask_file_generate_upload_path,
 )
 
 
@@ -79,6 +80,12 @@ class Result(TimeStamp):
         blank=True,
         max_length=600,
     )
+    mask = models.FileField(
+        upload_to=results_mask_file_generate_upload_path,
+        null=True,
+        blank=True,
+        max_length=600,
+    )
     defect_type = models.ForeignKey(
         DefectType, on_delete=models.CASCADE, related_name="results"
     )
@@ -88,11 +95,20 @@ class Result(TimeStamp):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="results"
     )
-    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    status = models.CharField(
+        max_length=1, choices=STATUS_CHOICES, default=STATUS_PENDING
+    )
+    number_of_images = models.IntegerField()
+    mask_mode = models.CharField(
+        choices=[("random", "Random"), ("in_paint", "In Paint")], max_length=8
+    )
     generated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ("created", "id",)
+        ordering = (
+            "created",
+            "id",
+        )
         constraints = [
             UniqueConstraint(
                 fields=["status"],
