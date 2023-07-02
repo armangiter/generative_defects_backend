@@ -15,3 +15,8 @@ class UserSignupInputSerializer(serializers.Serializer):
         if attrs["password"] != attrs["password2"]:
             raise serializers.ValidationError({"message":"entered passwords does not match."})
         return attrs
+    
+class CurrentUserOutputSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = User
+            fields = ("id", "email", "is_admin")

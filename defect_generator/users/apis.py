@@ -39,13 +39,10 @@ class UserListApi(APIView):
 
         users = UserService.user_list(filters=filters_serializer.validated_data)
 
-        return get_paginated_response(
-            pagination_class=self.UserPagination,
-            serializer_class=self.UserListOutputSerializer,
-            queryset=users,
-            request=request,
-            view=self,
-        )
+        serializer = self.UserListOutputSerializer(users, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 class UserDetailApi(APIView):

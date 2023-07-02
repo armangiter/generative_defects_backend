@@ -5,11 +5,12 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from defect_generator.authentication.apis import SignupApi
+from defect_generator.authentication.apis import CurrentUserApi, SignupApi
 
 
 urlpatterns = [
     path("signup/", SignupApi.as_view(), name="signup"),
     path("login/", TokenObtainPairView.as_view(), name="login"),
+    path("user/", CurrentUserApi.as_view(), name="user"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token-refresh"),
 ]
