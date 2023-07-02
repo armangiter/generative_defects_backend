@@ -2,20 +2,22 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import serializers, status
 from drf_spectacular.utils import extend_schema
+from defect_generator.api.mixins import ApiAuthMixin
 
 from defect_generator.defects.services.generate import GenerateService
 from defect_generator.defects.serializers.generate import GenerateInputSerializer
 
 
 # [POST] api/generate
-class GenerateApi(APIView):
-
+class GenerateApi(ApiAuthMixin, APIView):
     @extend_schema(request=GenerateInputSerializer)
     def post(self, request):
         serializer = GenerateInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        response = GenerateService.generate(**serializer.validated_data)
+        response = GenerateService.generate(
+            user=request.user, **serializer.validated_data
+        )
         if not response:
             return Response(
                 {"status": "already generating"}, status=status.HTTP_202_ACCEPTED

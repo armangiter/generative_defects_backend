@@ -9,6 +9,8 @@ services:
     ports:
       - "80:8000"
     restart: "always"
+    volumes:
+      - .:/app
     depends_on:
       - db
     env_file:

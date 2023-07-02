@@ -11,18 +11,13 @@ from defect_generator.defects.serializers.results import (
     ResultFilterSerializer,
     ResultInputSerializer,
     ResultOutputSerializer,
+    ResultDetailInputSerializer,
     ResultDetailOutputSerializer,
 )
 
 
 # [GET, POST] api/defects/results/
 class ResultApi(ApiAuthMixin, APIView):
-    def get_permissions(self):
-        # remove IsAuthenticated permission for post method
-        if self.request.method == "POST":
-            return []
-        else:
-            return super().get_permissions()
 
     @extend_schema(request=ResultInputSerializer)
     def post(self, request):
@@ -53,6 +48,25 @@ class ResultApi(ApiAuthMixin, APIView):
 
 # [GET, DELETE] api/defects/results/{result_id}/
 class ResultDetailApi(ApiAuthMixin, APIView):
+    def get_permissions(self):
+        # remove IsAuthenticated permission for post method
+        if self.request.method == "PUT":
+            return []
+        else:
+            return super().get_permissions()
+        
+    @extend_schema(request=ResultDetailInputSerializer)
+    def put(self, request, result_id):
+        serializer = ResultDetailInputSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            ResultService.result_update(result_id=result_id, **serializer.validated_data)
+        except Exception as ex:
+            return Response(f"Error {ex}", status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(status=status.HTTP_200_OK)
+
     @extend_schema(responses=ResultDetailOutputSerializer)
     def get(self, request, result_id):
         image = ResultService.result_get(id=result_id)

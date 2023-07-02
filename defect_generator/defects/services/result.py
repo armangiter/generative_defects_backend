@@ -48,6 +48,10 @@ class ResultService:
         return ResultFilter(filters, queryset=queryset).qs
 
     @staticmethod
+    def result_update(*, result_id: int, status: str) -> None:
+        Result.objects.filter(id=result_id).update(status=status)
+
+    @staticmethod
     def result_get(*, id: int, filters=None) -> Result:
         return Result.objects.prefetch_related("result_images").get(id=id)
 

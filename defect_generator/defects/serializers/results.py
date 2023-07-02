@@ -58,6 +58,11 @@ class ResultOutputSerializer(serializers.ModelSerializer):
         return None
 
 
+# used for updating a Result
+class ResultDetailInputSerializer(serializers.Serializer):
+    status = serializers.ChoiceField(choices=Result.STATUS_CHOICES, required=False)
+
+
 class ResultDetailOutputSerializer(serializers.ModelSerializer):
     class ResultImageSerializer2(serializers.ModelSerializer):
         file = serializers.SerializerMethodField()

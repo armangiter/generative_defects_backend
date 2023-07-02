@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.db.models import Q, UniqueConstraint
 
 from defect_generator.common.models import TimeStamp
 from defect_generator.defects.utils import (
@@ -88,7 +89,17 @@ class Result(TimeStamp):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="results"
     )
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=STATUS_PENDING)
-    # used = models.BooleanField(default=False)
+    generated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("created", "id",)
+        constraints = [
+            UniqueConstraint(
+                fields=["status"],
+                condition=Q(status="g"),
+                name="unique_generating_result",
+            )
+        ]
 
     def __str__(self) -> str:
         return f"{self.id}"

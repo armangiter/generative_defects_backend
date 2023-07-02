@@ -38,10 +38,12 @@ class ResultAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "image",
+        "user_id",
         "defect_type_id",
         "defect_model_id",
+        "status",
     )
-    list_filter = ("defect_type_id",)
+    list_filter = ("defect_type_id", "defect_model_id")
 
 
 @admin.register(ResultImage)
