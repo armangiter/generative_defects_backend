@@ -72,7 +72,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
     "http://127.0.0.1:9000",
     "http://153.156.254.150:50828",
-    "http://localhost:82"
+    "http://localhost:82",
 ]
 
 REST_FRAMEWORK = {
@@ -82,7 +82,10 @@ REST_FRAMEWORK = {
     ],
 }
 
-SIMPLE_JWT = {"ACCESS_TOKEN_LIFETIME": timedelta(days=1)}
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "TOKEN_OBTAIN_SERIALIZER": "defect_generator.authentication.serializers.LoginInputSerializer",
+}
 
 ROOT_URLCONF = "config.urls"
 
