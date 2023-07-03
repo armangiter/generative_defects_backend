@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import serializers, status
 from drf_spectacular.utils import extend_schema
 from defect_generator.api.mixins import ApiAuthMixin
+from defect_generator.defects.exceptions import AlreadyGeneratingError
 
 from defect_generator.defects.services.generate import GenerateService
 from defect_generator.defects.serializers.generate import GenerateFinishInputSerializer, GenerateInputSerializer
@@ -19,6 +20,8 @@ class GenerateApi(ApiAuthMixin, APIView):
             GenerateService.generate(
                 user=request.user, **serializer.validated_data
             )
+        except AlreadyGeneratingError:
+            ...
         except Exception as ex:
             return Response(f"Error {ex}", status=status.HTTP_400_BAD_REQUEST)
     
