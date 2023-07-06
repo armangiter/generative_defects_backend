@@ -33,6 +33,7 @@ class ResultOutputSerializer(serializers.ModelSerializer):
 
     result_images = ResultImageSerializer(many=True)
     defect_type = inline_serializer(
+        name="defect_type_inline_results_serializer",
         fields={
             "id": serializers.IntegerField(),
             "name": serializers.CharField(),
@@ -76,13 +77,19 @@ class ResultDetailOutputSerializer(serializers.ModelSerializer):
             return get_real_url(obj.file.url)
 
     result_images = ResultImageSerializer2(many=True)
-
+    defect_type = inline_serializer(
+        name="defect_type_detail_inline_results_serializer",
+        fields={
+            "id": serializers.IntegerField(),
+            "name": serializers.CharField(),
+        }
+    )
     class Meta:
         model = Result
         fields = (
             "id",
             "image",
-            "defect_type_id",
+            "defect_type",
             "defect_model_id",
             "result_images",
             "status",

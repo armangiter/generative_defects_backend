@@ -54,7 +54,11 @@ class ResultService:
 
     @staticmethod
     def result_get(*, id: int, filters=None) -> Result:
-        return Result.objects.prefetch_related("result_images").get(id=id)
+        return (
+            Result.objects.prefetch_related("result_images")
+            .select_related("defect_type")
+            .get(id=id)
+        )
 
     @staticmethod
     def result_delete(*, image_id: int) -> None:
