@@ -7,7 +7,7 @@ from defect_generator.api.mixins import ApiAuthMixin
 from defect_generator.api.utils import inline_serializer
 
 from defect_generator.defects.services.result import ResultService
-from defect_generator.defects.serializers.results import (
+from defect_generator.defects.serializers.result import (
     ResultFilterSerializer,
     ResultInputSerializer,
     ResultOutputSerializer,
