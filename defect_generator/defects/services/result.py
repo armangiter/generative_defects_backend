@@ -38,7 +38,7 @@ class ResultService:
     def result_list(*, user, filters=None) -> QuerySet[Result]:
         queryset = (
             Result.objects.prefetch_related("result_images")
-            .select_related("defect_type")
+            .select_related("defect_type", "defect_model")
             .order_by("-id")
             .filter(user=user)
         )
@@ -56,7 +56,7 @@ class ResultService:
     def result_get(*, id: int, filters=None) -> Result:
         return (
             Result.objects.prefetch_related("result_images")
-            .select_related("defect_type")
+            .select_related("defect_type", "defect_model")
             .get(id=id)
         )
 
