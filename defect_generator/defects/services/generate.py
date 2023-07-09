@@ -71,8 +71,18 @@ class GenerateService:
             serializer.is_valid(raise_exception=True)
 
             print(result.id)
+            data = serializer.validated_data
             # generate the pending generate task
-            GenerateService.generate(user=user, result_id=result.id, **serializer.validated_data)
+            GenerateService.generate(
+                user=user,
+                result_id=result.id,
+                image_file=data["image_file"],
+                mask_file=data["mask_file"],
+                defect_type_id=data["defect_type_id"],
+                defect_model_id=data["defect_model_id"],
+                mask_mode=data["mask_mode"],
+                number_of_images=data["number_of_images"],
+            )
 
     @staticmethod
     def generate(
@@ -86,7 +96,6 @@ class GenerateService:
         mask_mode: str,
         number_of_images: int,
     ) -> None:
-    
         generating_result_exists = Result.objects.filter(
             status=Result.STATUS_GENERATING
         ).exists()
@@ -105,9 +114,9 @@ class GenerateService:
             raise AlreadyGeneratingError(
                 {"message": "there is a generate task running already."}
             )
-        
+
         with transaction.atomic():
-             # if this service called from generate_finish service
+            # if this service called from generate_finish service
             if result_id is not None:
                 result = Result.objects.get(id=result_id)
                 target_image_file = result.image
@@ -130,7 +139,6 @@ class GenerateService:
 
             file_path = write_file_to_disk(file=target_image_file)
             mask_file_path = write_file_to_disk(file=target_mask_file)
-
 
             generate_task.delay(
                 file_path,
@@ -177,7 +185,11 @@ class GenerateCeleryService:
 
             # set the result status "generating"
             result = Result.objects.get(id=result_id)
-            model_update(instance=result, fields=["status"], data={"status": Result.STATUS_GENERATING})
+            model_update(
+                instance=result,
+                fields=["status"],
+                data={"status": Result.STATUS_GENERATING},
+            )
 
             requests.post(
                 "http://inference_web:8000/inference/",
