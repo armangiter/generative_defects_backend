@@ -119,8 +119,8 @@ class GenerateService:
             # if this service called from generate_finish service
             if result_id is not None:
                 result = Result.objects.get(id=result_id)
-                target_image_file = result.image
-                target_mask_file = result.mask
+                target_image_file = result.image.file
+                target_mask_file = result.mask.file
             # if this service called for the first time
             else:
                 target_image_file = copy.deepcopy(image_file)
