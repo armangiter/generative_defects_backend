@@ -26,6 +26,7 @@ LOCAL_APPS = [
     "defect_generator.defects.apps.DefectsConfig",
     "defect_generator.integrations.apps.IntegrationsConfig",
     "defect_generator.users.apps.UsersConfig",
+    "defect_generator.workers.apps.WorkersConfig",
 ]
 
 THIRD_PARTY_APPS = [

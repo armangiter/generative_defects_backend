@@ -96,7 +96,7 @@ class Result(TimeStamp):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="results"
     )
     status = models.CharField(
-        max_length=1, choices=STATUS_CHOICES, default=None, blank=True, null=True
+        max_length=1, choices=STATUS_CHOICES, default=None  , blank=True, null=True
     )
     number_of_images = models.IntegerField()
     mask_mode = models.CharField(

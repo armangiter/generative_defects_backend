@@ -17,7 +17,7 @@ class GenerateApi(ApiAuthMixin, APIView):
         serializer.is_valid(raise_exception=True)
 
         try:
-            GenerateService.generate(
+            GenerateService.generate_new(
                 user=request.user, **serializer.validated_data
             )
         except AlreadyGeneratingError:
@@ -43,6 +43,6 @@ class GenerateFinishApi(APIView):
         serializer = GenerateFinishInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        GenerateService.finish_generate(**serializer.validated_data)
+        GenerateService.finish_generate_new(**serializer.validated_data)
 
         return Response({"status": "generate finished"}, status=status.HTTP_200_OK)

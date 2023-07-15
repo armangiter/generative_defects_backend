@@ -150,6 +150,38 @@ class GenerateService:
                 result.id,
                 user.id,
             )
+    
+    @staticmethod
+    def finish_generate_new(*, result_id: int, user_id: int) -> str:
+        # update status of generating result
+        print(f"updating result status of result {result_id}")
+        result = Result.objects.get(id=result_id)
+        result, has_updated = model_update(
+            instance=result, fields=["status"], data={"status": Result.STATUS_FINISHED}
+        )
+
+    @staticmethod
+    def generate_new(
+        *,
+        user,
+        result_id: int = None,
+        image_file: File,
+        mask_file: File,
+        defect_type_id: int,
+        defect_model_id: int,
+        mask_mode: str,
+        number_of_images: int,
+    ) -> None:
+        Result.objects.create(
+            defect_model_id=defect_model_id,
+            defect_type_id=defect_type_id,
+            user_id=user.id,
+            image=image_file,
+            mask=mask_file,
+            number_of_images=number_of_images,
+            mask_mode=mask_mode,
+            status=Result.STATUS_PENDING,
+        )
 
 
 class GenerateCeleryService:

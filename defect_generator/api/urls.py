@@ -1,7 +1,5 @@
 from django.urls import include, path
 
-# from .apis import DefectTypeApi
-
 
 urlpatterns = [
     path(
@@ -13,5 +11,8 @@ urlpatterns = [
     ),
     path(
         "auth/", include(("defect_generator.authentication.urls", "auth"), namespace="auth")
+    ),
+    path(
+        "workers/", include(("defect_generator.workers.urls", "workers"), namespace="workers")
     ),
 ]
