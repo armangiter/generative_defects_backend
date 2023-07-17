@@ -5,9 +5,10 @@ from django.db import transaction
 from django.db.models import QuerySet
 from django.core.files import File
 from django.core.files.storage import FileSystemStorage
+from defect_generator.common.services import model_update
 from defect_generator.common.types import DjangoModelType
 from defect_generator.defects.filters import ResultFilter
-
+from rest_framework.viewsets import ModelViewSet
 
 from defect_generator.defects.models import Result, ResultImage
 from defect_generator.defects.tasks.result import result_create as result_create_task
@@ -49,8 +50,15 @@ class ResultService:
         return ResultFilter(filters, queryset=queryset).qs
 
     @staticmethod
-    def result_update(*, result_id: int, status: str) -> None:
-        Result.objects.filter(id=result_id).update(status=status)
+    def result_update(*, result_id: int, status: str = None, error: str = None) -> None:
+        if status is None:
+            result = Result.objects.filter(id=result_id).update(error=error)
+        elif error is None:
+            result = Result.objects.filter(id=result_id).update(status=status)
+        else:
+            result = Result.objects.filter(id=result_id).update(
+                status=status, error=error
+            )
 
     @staticmethod
     def result_get(*, id: int, filters=None) -> Result:

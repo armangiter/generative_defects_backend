@@ -43,6 +43,7 @@ class ResultAdmin(admin.ModelAdmin):
         "status",
         "number_of_images",
         "mask_mode",
+        "error"
     )
     list_filter = ("user_id", "defect_type_id", "defect_model_id")
 
@@ -54,3 +55,5 @@ class ResultImageAdmin(admin.ModelAdmin):
         "result_id",
         "file",
     )
+    list_filter = ("result_id",)
+

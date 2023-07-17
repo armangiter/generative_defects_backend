@@ -66,6 +66,7 @@ class ResultOutputSerializer(serializers.ModelSerializer):
             "result_images",
             "status",
             "user_id",
+            "error",
             "created",
         )
 
@@ -78,6 +79,7 @@ class ResultOutputSerializer(serializers.ModelSerializer):
 # used for updating a Result
 class ResultDetailInputSerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=Result.STATUS_CHOICES, required=False)
+    error = serializers.CharField(required=False)
 
 
 class ResultDetailOutputSerializer(serializers.ModelSerializer):

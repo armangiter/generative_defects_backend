@@ -103,6 +103,7 @@ class Result(TimeStamp):
         choices=[("random", "Random"), ("in_paint", "In Paint")], max_length=8
     )
     generated_at = models.DateTimeField(auto_now=True)
+    error = models.TextField(null=True, blank=True, default=None)
 
     class Meta:
         ordering = (
