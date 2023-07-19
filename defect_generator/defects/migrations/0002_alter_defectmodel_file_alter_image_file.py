@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 blank=True,
                 max_length=600,
                 null=True,
-                upload_to=defect_generator.defects.utils.defect_models_file_generate_upload_path,
+                upload_to=defect_generator.defects.utils.weights_file_generate_upload_path,
             ),
         ),
         migrations.AlterField(

@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from defect_generator.api.utils import inline_serializer
 
-from defect_generator.defects.models import DefectModel, Result, ResultImage
+from defect_generator.defects.models import DefectModel, DefectType, Result, ResultImage, Weight
 from defect_generator.defects.utils import get_real_url
 
 
@@ -10,27 +10,31 @@ from defect_generator.defects.utils import get_real_url
 class GenerateJobOutputSerializer(serializers.ModelSerializer):
 
     class DefectModelInGenerateJobSerializer(serializers.ModelSerializer):
-        file = serializers.SerializerMethodField()
-
         class Meta:
             model = DefectModel
-            fields = ["id", "name", "file"]
+            fields = ["id", "name"]
 
-        def get_file(self, obj: DefectModel):
+    defect_model = DefectModelInGenerateJobSerializer()
+
+    class DefectTypeInGenerateJobSerializer(serializers.ModelSerializer):
+        class WeightInDefectTypeGenerateJobSerializer(serializers.ModelSerializer):
+
+            class Meta:
+                model = Weight
+                fields = ["id", "file"]
+        
+        weight = WeightInDefectTypeGenerateJobSerializer()
+
+        class Meta:
+            model = DefectType
+            fields = ["id", "name", "command", "weight"]
+
+        def get_file(self, obj: Weight):
             if bool(obj.file) is True:
                 return get_real_url(obj.file.url)
             return None
         
-    defect_model = DefectModelInGenerateJobSerializer()
-    
-    defect_type = inline_serializer(
-        name="defect_type_in_generate_job_serializer",
-        fields={
-            "id": serializers.IntegerField(),
-            "name": serializers.CharField(),
-            "command": serializers.CharField(),
-        },
-    )
+    defect_type = DefectTypeInGenerateJobSerializer()
 
     image = serializers.SerializerMethodField()
     mask = serializers.SerializerMethodField()

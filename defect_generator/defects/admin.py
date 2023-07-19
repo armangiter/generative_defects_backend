@@ -6,6 +6,9 @@ from defect_generator.defects.models import (
     Image,
     Result,
     ResultImage,
+    FineTune,
+    FineTuneImage,
+    Weight,
 )
 
 
@@ -16,6 +19,7 @@ class DefectTypeAdmin(admin.ModelAdmin):
         "name",
         "command",
         "defect_model_id",
+        "weight_id",
     )
 
 
@@ -27,6 +31,14 @@ class ImageAdmin(admin.ModelAdmin):
 
 @admin.register(DefectModel)
 class DefectModelAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "name",
+    )
+
+
+@admin.register(Weight)
+class WeightAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "file",
@@ -43,7 +55,7 @@ class ResultAdmin(admin.ModelAdmin):
         "status",
         "number_of_images",
         "mask_mode",
-        "error"
+        "error",
     )
     list_filter = ("user_id", "defect_type_id", "defect_model_id")
 
@@ -57,3 +69,22 @@ class ResultImageAdmin(admin.ModelAdmin):
     )
     list_filter = ("result_id",)
 
+
+@admin.register(FineTune)
+class FineTuneAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "name",
+        "status",
+    )
+    list_filter = ("status",)
+
+
+@admin.register(FineTuneImage)
+class FineTuneImageAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "fine_tune_id",
+        "image_id",
+    )
+    list_filter = ("fine_tune_id",)

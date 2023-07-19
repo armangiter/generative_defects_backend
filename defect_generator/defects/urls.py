@@ -16,6 +16,7 @@ from defect_generator.defects.apis.result_image import (
     ResultImageApi,
     ResultImageDetailApi,
 )
+from defect_generator.defects.apis.weight import WeightApi, WeightDetailApi
 
 app_name = "defects"
 
@@ -59,6 +60,11 @@ result_images_patterns = [
     path("<int:result_image_id>/", ResultImageDetailApi.as_view(), name="result-image-detail"),
 ]
 
+weights_patterns = [
+    path("", WeightApi.as_view(), name="weight-images"),
+    path("<int:weight_id>/", WeightDetailApi.as_view(), name="weight-detail"),
+]
+
 urlpatterns = [
     path("types/", include((defect_type_patterns, "defect-types"))),
     path("images/", include((image_patterns, "images"))),
@@ -67,4 +73,5 @@ urlpatterns = [
     path("fine_tune/", include((fine_tune_patterns, "fine_tunes"))),
     path("results/", include((result_patterns, "results"))),
     path("result-images/", include((result_images_patterns, "results-images"))),
+    path("weights/", include((weights_patterns, "weights"))),
 ]

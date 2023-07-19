@@ -27,9 +27,9 @@ def mask_file_generate_upload_path(instance, filename):
     return f"masks/{os.path.basename(filename)}"
 
 
-def defect_models_file_generate_upload_path(instance, filename):
+def weights_file_generate_upload_path(instance, filename):
     # file_new_name = file_generate_name(original_file_name=filename)
-    return f"defect_models/{os.path.basename(filename)}"
+    return f"weights/{os.path.basename(filename)}"
 
 
 def results_file_generate_upload_path(instance, filename):

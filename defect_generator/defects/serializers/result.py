@@ -2,7 +2,13 @@ from rest_framework import serializers
 
 from defect_generator.api.utils import inline_serializer
 
-from defect_generator.defects.models import DefectModel, Result, ResultImage
+from defect_generator.defects.models import (
+    DefectModel,
+    DefectType,
+    Result,
+    ResultImage,
+    Weight,
+)
 from defect_generator.defects.utils import get_real_url
 
 
@@ -34,25 +40,30 @@ class ResultOutputSerializer(serializers.ModelSerializer):
     result_images = ResultImageSerializer(many=True)
 
     class DefectModelInResultsSerializer(serializers.ModelSerializer):
-        file = serializers.SerializerMethodField()
-
         class Meta:
             model = DefectModel
-            fields = ["id", "name", "file"]
+            fields = ["id", "name"]
 
-        def get_file(self, obj: DefectModel):
+    defect_model = DefectModelInResultsSerializer()
+
+    class DefectTypeInResultSerializer(serializers.ModelSerializer):
+        class WeightInDefectTypeResultSerializer(serializers.ModelSerializer):
+            class Meta:
+                model = Weight
+                fields = ["id", "file"]
+
+        weight = WeightInDefectTypeResultSerializer()
+
+        class Meta:
+            model = DefectType
+            fields = ["id", "name", "command", "weight"]
+
+        def get_file(self, obj: Weight):
             if bool(obj.file) is True:
                 return get_real_url(obj.file.url)
             return None
-    defect_model = DefectModelInResultsSerializer()
-    
-    defect_type = inline_serializer(
-        name="defect_type_in_results_serializer",
-        fields={
-            "id": serializers.IntegerField(),
-            "name": serializers.CharField(),
-        },
-    )
+
+    defect_type = DefectTypeInResultSerializer()
 
     image = serializers.SerializerMethodField()
 
@@ -96,25 +107,30 @@ class ResultDetailOutputSerializer(serializers.ModelSerializer):
     result_images = ResultImageSerializer2(many=True)
 
     class DefectModelInResultsDetailSerializer(serializers.ModelSerializer):
-        file = serializers.SerializerMethodField()
-
         class Meta:
             model = DefectModel
-            fields = ["id", "name", "file"]
+            fields = ["id", "name"]
 
-        def get_file(self, obj: DefectModel):
+    defect_model = DefectModelInResultsDetailSerializer()
+
+    class DefectTypeInResultSerializer(serializers.ModelSerializer):
+        class WeightInDefectTypeResultSerializer(serializers.ModelSerializer):
+            class Meta:
+                model = Weight
+                fields = ["id", "file"]
+
+        weight = WeightInDefectTypeResultSerializer()
+
+        class Meta:
+            model = DefectType
+            fields = ["id", "name", "command", "weight"]
+
+        def get_file(self, obj: Weight):
             if bool(obj.file) is True:
                 return get_real_url(obj.file.url)
             return None
-    defect_model = DefectModelInResultsDetailSerializer()
 
-    defect_type = inline_serializer(
-        name="defect_type_in_results_detail_serializer",
-        fields={
-            "id": serializers.IntegerField(),
-            "name": serializers.CharField(),
-        },
-    )
+    defect_type = DefectTypeInResultSerializer()
 
     class Meta:
         model = Result

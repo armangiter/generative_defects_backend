@@ -4,7 +4,7 @@ from django.db.models import Q, UniqueConstraint
 
 from defect_generator.common.models import TimeStamp
 from defect_generator.defects.utils import (
-    defect_models_file_generate_upload_path,
+    weights_file_generate_upload_path,
     result_images_file_generate_upload_path,
     results_file_generate_upload_path,
     results_mask_file_generate_upload_path,
@@ -13,15 +13,28 @@ from defect_generator.defects.utils import (
 
 class DefectModel(models.Model):
     name = models.CharField(max_length=127)
+    # file = models.FileField(
+    #     upload_to=weights_file_generate_upload_path,
+    #     null=True,
+    #     blank=True,
+    #     max_length=600,
+    # )
+
+    def __str__(self) -> str:
+        return f"{self.id}"
+
+
+# TODO add weight model
+class Weight(models.Model):
     file = models.FileField(
-        upload_to=defect_models_file_generate_upload_path,
+        upload_to=weights_file_generate_upload_path,
         null=True,
         blank=True,
         max_length=600,
     )
 
     def __str__(self) -> str:
-        return f"{self.id}, {self.file.name}"
+        return f"{self.id}"
 
 
 class DefectType(models.Model):
@@ -29,6 +42,9 @@ class DefectType(models.Model):
     command = models.CharField(max_length=512)
     defect_model = models.ForeignKey(
         DefectModel, on_delete=models.SET_NULL, null=True, blank=True, default=None
+    )
+    weight = models.ForeignKey(
+        Weight, on_delete=models.SET_NULL, null=True, blank=True, default=None
     )
 
     def __str__(self) -> str:
@@ -92,11 +108,19 @@ class Result(TimeStamp):
     defect_model = models.ForeignKey(
         DefectModel, on_delete=models.CASCADE, related_name="results"
     )
+    # weight = models.ForeignKey(
+    #     Weight,
+    #     on_delete=models.CASCADE,
+    #     related_name="results",
+    #     null=True,
+    #     blank=True,
+    #     default=None,
+    # )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="results"
     )
     status = models.CharField(
-        max_length=1, choices=STATUS_CHOICES, default=None  , blank=True, null=True
+        max_length=1, choices=STATUS_CHOICES, default=None, blank=True, null=True
     )
     number_of_images = models.IntegerField()
     mask_mode = models.CharField(
@@ -132,6 +156,55 @@ class ResultImage(models.Model):
         blank=True,
         max_length=600,
     )
+
+    def __str__(self) -> str:
+        return f"{self.id}"
+
+
+class FineTune(TimeStamp):
+    STATUS_PENDING = "p"
+    STATUS_TUNING = "t"
+    STATUS_FINISHED = "f"
+
+    STATUS_CHOICES = (
+        (STATUS_PENDING, "Pending"),
+        (STATUS_TUNING, "Tuning"),
+        (STATUS_FINISHED, "Finished"),
+    )
+    name = models.CharField(max_length=255)
+    status = models.CharField(
+        max_length=1, choices=STATUS_CHOICES, default=None, blank=True, null=True
+    )
+
+    class Meta:
+        ordering = (
+            "created",
+            "id",
+        )
+        constraints = [
+            UniqueConstraint(
+                fields=["status"],
+                condition=Q(status="t"),
+                name="unique_tuning_fine_tune",
+            )
+        ]
+        verbose_name = "Fine Tune"
+
+    def __str__(self) -> str:
+        return f"{self.id}"
+
+
+class FineTuneImage(models.Model):
+    fine_tune = models.ForeignKey(
+        FineTune, on_delete=models.CASCADE, related_name="fine_tune_images"
+    )
+    image = models.ForeignKey(
+        Image, on_delete=models.CASCADE, related_name="fine_tune_images"
+    )
+
+    class Meta:
+        ordering = ("id",)
+        verbose_name = "Fine Tune Image"
 
     def __str__(self) -> str:
         return f"{self.id}"

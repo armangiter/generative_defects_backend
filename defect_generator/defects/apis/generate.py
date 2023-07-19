@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import serializers, status
+from rest_framework import status
 from drf_spectacular.utils import extend_schema
 from defect_generator.api.mixins import ApiAuthMixin
 from defect_generator.defects.exceptions import AlreadyGeneratingError
