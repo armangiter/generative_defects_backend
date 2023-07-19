@@ -96,7 +96,7 @@ class ResultDetailInputSerializer(serializers.Serializer):
 
 
 class ResultDetailOutputSerializer(serializers.ModelSerializer):
-    class ResultImageSerializer2(serializers.ModelSerializer):
+    class ResultImageInResultSerializer(serializers.ModelSerializer):
         file = serializers.SerializerMethodField()
 
         class Meta:
@@ -106,7 +106,7 @@ class ResultDetailOutputSerializer(serializers.ModelSerializer):
         def get_file(self, obj: ResultImage):
             return get_real_url(obj.file.url)
 
-    result_images = ResultImageSerializer2(many=True)
+    result_images = ResultImageInResultSerializer(many=True)
 
     class DefectModelInResultsDetailSerializer(serializers.ModelSerializer):
         class Meta:
@@ -118,7 +118,7 @@ class ResultDetailOutputSerializer(serializers.ModelSerializer):
     class DefectTypeInResultSerializer(serializers.ModelSerializer):
         class WeightInDefectTypeResultSerializer(serializers.ModelSerializer):
             file = serializers.SerializerMethodField()
-            
+
             class Meta:
                 model = Weight
                 fields = ["id", "file"]
@@ -135,6 +135,13 @@ class ResultDetailOutputSerializer(serializers.ModelSerializer):
             fields = ["id", "name", "command", "weight"]
 
     defect_type = DefectTypeInResultSerializer()
+
+    image = serializers.SerializerMethodField()
+
+    def get_image(self, obj: Result):
+        if bool(obj.image) is True:
+            return get_real_url(obj.image.url)
+        return None
 
     class Meta:
         model = Result
