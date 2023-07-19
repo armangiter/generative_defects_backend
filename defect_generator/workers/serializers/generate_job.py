@@ -18,7 +18,8 @@ class GenerateJobOutputSerializer(serializers.ModelSerializer):
 
     class DefectTypeInGenerateJobSerializer(serializers.ModelSerializer):
         class WeightInDefectTypeGenerateJobSerializer(serializers.ModelSerializer):
-
+            file = serializers.SerializerMethodField()
+            
             class Meta:
                 model = Weight
                 fields = ["id", "file"]

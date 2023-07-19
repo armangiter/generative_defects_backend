@@ -48,6 +48,8 @@ class ResultOutputSerializer(serializers.ModelSerializer):
 
     class DefectTypeInResultSerializer(serializers.ModelSerializer):
         class WeightInDefectTypeResultSerializer(serializers.ModelSerializer):
+            file = serializers.SerializerMethodField()
+            
             class Meta:
                 model = Weight
                 fields = ["id", "file"]
@@ -115,6 +117,8 @@ class ResultDetailOutputSerializer(serializers.ModelSerializer):
 
     class DefectTypeInResultSerializer(serializers.ModelSerializer):
         class WeightInDefectTypeResultSerializer(serializers.ModelSerializer):
+            file = serializers.SerializerMethodField()
+            
             class Meta:
                 model = Weight
                 fields = ["id", "file"]
