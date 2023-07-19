@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
 from defect_generator.defects.models import DefectType
-from defect_generator.defects.services.defect_type import DefectTypeService
 
 
 

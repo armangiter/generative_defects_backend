@@ -10,16 +10,9 @@ class DefectModelInputSerializer(serializers.Serializer):
 
 
 class DefectModelOutputSerializer(serializers.ModelSerializer):
-    file = serializers.SerializerMethodField()
-
     class Meta:
         model = DefectModel
-        fields = ("id", "name", "file")
-
-    def get_file(self, obj: DefectModel):
-        if bool(obj.file) is True:
-            return get_real_url(obj.file.url)
-        return None
+        fields = ("id", "name")
 
 
 class DefectModelDetailOutputSerializer(serializers.ModelSerializer):
@@ -27,9 +20,4 @@ class DefectModelDetailOutputSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DefectModel
-        fields = ("id", "name", "file")
-
-    def get_file(self, obj: DefectModel):
-        if bool(obj.file) is True:
-            return get_real_url(obj.file.url)
-        return None
+        fields = ("id", "name")
