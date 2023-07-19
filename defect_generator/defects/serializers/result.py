@@ -49,7 +49,7 @@ class ResultOutputSerializer(serializers.ModelSerializer):
     class DefectTypeInResultSerializer(serializers.ModelSerializer):
         class WeightInDefectTypeResultSerializer(serializers.ModelSerializer):
             file = serializers.SerializerMethodField()
-            
+
             class Meta:
                 model = Weight
                 fields = ["id", "file"]
@@ -123,10 +123,10 @@ class ResultDetailOutputSerializer(serializers.ModelSerializer):
                 model = Weight
                 fields = ["id", "file"]
 
-        def get_file(self, obj: Weight):
-            if bool(obj.file) is True:
-                return get_real_url(obj.file.url)
-            return None
+            def get_file(self, obj: Weight):
+                if bool(obj.file) is True:
+                    return get_real_url(obj.file.url)
+                return None
 
         weight = WeightInDefectTypeResultSerializer()
 
