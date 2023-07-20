@@ -3,10 +3,9 @@ from pathlib import Path
 
 from django.db import transaction
 from django.db.models import QuerySet
-from django.core.cache import cache
-import requests
+from defect_generator.defects.filters import FineTuneFilter
 
-from defect_generator.defects.models import DefectModel, DefectType, Image
+from defect_generator.defects.models import FineTune, Image
 
 
 logger = logging.getLogger(__name__)
@@ -14,43 +13,41 @@ logger = logging.getLogger(__name__)
 
 class FineTuneService:
     @staticmethod
-    def get_fine_tune_status() -> str:
-        response = "training" if cache.get("fine-tune-lock") else "ready"
-        return response
-
-    @staticmethod
-    def finish_fine_tune() -> str:
-        # release the lock
-        cache.set("fine-tune-lock", False)
-
-    @staticmethod
     @transaction.atomic
-    def fine_tune() -> bool:
-        lock = cache.get("fine-tune-lock")
-        if lock:
-            return False
-        logger.info("tunning the images ...")
-        cache.set("fine-tune-lock", True)
+    def fine_tune_create(user) -> None:
+        FineTune.objects.create(
+            user_id=user.id,
+            status=FineTune.STATUS_PENDING,
+        )
 
-        # create instance prompt
-        not_tuned_images = Image.objects.filter(tuned=False)
-        images_defect_ids = not_tuned_images.distinct().values_list(
-            "defect_type_id", flat=True
-        )
-        defect_types: list = list(
-            DefectType.objects.filter(id__in=images_defect_ids).values_list(
-                "command", flat=True
-            )
-        )
-        instance_prompt: str = ",".join(defect_types)
-        
-        requests.post(
-            "http://train_web:8000/train/",
-            data={
-                "instance_prompt": instance_prompt,
-            },
-            # files={"image_file": image_file, "mask_file": mask_image_file},
-        )
-        Image.objects.filter(tuned=False).update(tuned=True)
+    @staticmethod
+    def fine_tune_list(*, user, filters=None) -> QuerySet[FineTune]:
+        queryset = FineTune.objects.order_by("-id").filter(user=user)
 
-        return True
+        if filters is None:
+            filters = {}
+
+        return FineTuneFilter(filters, queryset=queryset).qs
+
+    @staticmethod
+    def fine_tune_update(
+        *,
+        fine_tune_id: int,
+        status: str,
+    ) -> None:
+        FineTune.objects.filter(id=fine_tune_id).update(status=status)
+
+    @staticmethod
+    def fine_tune_get(*, fine_tune_id: int, filters=None) -> FineTune:
+        return FineTune.objects.get(id=fine_tune_id)
+
+    @staticmethod
+    def fine_tune_delete(*, fine_tune_id: int) -> None:
+        FineTune.objects.filter(id=fine_tune_id).delete()
+
+    @staticmethod
+    def get_related_images(fine_tune: FineTune) -> QuerySet[Image]:
+        fine_tune_images_id = fine_tune.fine_tune_images.all().values_list(
+            "image_id", flat=True
+        )
+        return Image.objects.filter(id__in=fine_tune_images_id)

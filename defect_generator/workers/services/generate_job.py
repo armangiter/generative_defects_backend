@@ -5,19 +5,10 @@ from django.db import transaction
 from django.contrib.auth import get_user_model
 from rest_framework import exceptions
 
-import requests
 
 from defect_generator.common.services import model_update
-from defect_generator.defects.exceptions import AlreadyGeneratingError
 
-from defect_generator.defects.models import DefectModel, DefectType, Result
-from defect_generator.defects.serializers.generate import GenerateInputSerializer
-from defect_generator.defects.tasks.generate import generate as generate_task
-from defect_generator.defects.utils import (
-    get_real_url,
-    write_file_to_disk,
-)
-
+from defect_generator.defects.models import Result
 
 logger = logging.getLogger(__name__)
 User = get_user_model()

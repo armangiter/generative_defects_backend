@@ -49,7 +49,7 @@ class ResultApi(ApiAuthMixin, APIView):
 # [GET, DELETE] api/defects/results/{result_id}/
 class ResultDetailApi(ApiAuthMixin, APIView):
     def get_permissions(self):
-        # remove IsAuthenticated permission for post method
+        # remove IsAuthenticated permission for put method
         if self.request.method == "PUT":
             return []
         else:

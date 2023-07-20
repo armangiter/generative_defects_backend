@@ -13,18 +13,11 @@ from defect_generator.defects.utils import (
 
 class DefectModel(models.Model):
     name = models.CharField(max_length=127)
-    # file = models.FileField(
-    #     upload_to=weights_file_generate_upload_path,
-    #     null=True,
-    #     blank=True,
-    #     max_length=600,
-    # )
 
     def __str__(self) -> str:
         return f"{self.id}"
 
 
-# TODO add weight model
 class Weight(models.Model):
     file = models.FileField(
         upload_to=weights_file_generate_upload_path,
@@ -108,14 +101,6 @@ class Result(TimeStamp):
     defect_model = models.ForeignKey(
         DefectModel, on_delete=models.CASCADE, related_name="results"
     )
-    # weight = models.ForeignKey(
-    #     Weight,
-    #     on_delete=models.CASCADE,
-    #     related_name="results",
-    #     null=True,
-    #     blank=True,
-    #     default=None,
-    # )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="results"
     )
@@ -172,6 +157,9 @@ class FineTune(TimeStamp):
         (STATUS_FINISHED, "Finished"),
     )
     name = models.CharField(max_length=255)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="fine_tunes"
+    )
     status = models.CharField(
         max_length=1, choices=STATUS_CHOICES, default=None, blank=True, null=True
     )

@@ -30,8 +30,6 @@ class ResultImageService:
         # Calling the celery task
         result_image_create.delay(files_path, files_name, result_id)
 
-
-
     @staticmethod
     def image_list(*, filters=None) -> QuerySet[ResultImage]:
         return ResultImage.objects.all()
@@ -47,11 +45,11 @@ class ResultImageCeleryService:
         result_id: int,
     ) -> None:
         storage = FileSystemStorage()
-        
+
         result_images = []
         for file_path in files_path:
             file_path_object = Path(file_path)
-            
+
             with file_path_object.open(mode="rb") as file:
                 logger.info(f"Uploading file: {file.name} ....")
 

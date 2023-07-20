@@ -15,3 +15,11 @@ class ResultFilter(filters.FilterSet):
     class Meta:
         model = Result
         fields = ["status", "user_id"]
+
+
+class FineTuneFilter(filters.FilterSet):
+    status = filters.CharFilter(lookup_expr="exact")
+    
+    class Meta:
+        model = Result
+        fields = ["status", "user_id"]

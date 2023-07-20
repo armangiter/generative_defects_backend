@@ -3,8 +3,12 @@ from defect_generator.defects.apis.defect_model import (
     DefectModelApi,
     DefectModelDetailApi,
 )
-from defect_generator.defects.apis.fine_tune import FineTuneApi, FineTuneFinishApi, FineTuneStatusApi
-from defect_generator.defects.apis.generate import GenerateApi, GenerateFinishApi, GenerateStatusApi
+from defect_generator.defects.apis.fine_tune import FineTuneApi, FineTuneDetailApi
+from defect_generator.defects.apis.generate import (
+    GenerateApi,
+    GenerateFinishApi,
+    GenerateStatusApi,
+)
 
 from defect_generator.defects.apis.image import ImageApi, ImageDetailApi
 from defect_generator.defects.apis.defect_type import DefectTypeApi, DefectTypeDetailApi
@@ -44,10 +48,8 @@ generate_patterns = [
 ]
 
 fine_tune_patterns = [
-    path("", FineTuneApi.as_view(), name="fine-tune"),
-    path("status/", FineTuneStatusApi.as_view(), name="fine-tune-status"),
-    path("finish/", FineTuneFinishApi.as_view(), name="fine-tune-finish"),
-
+    path("", FineTuneApi.as_view(), name="fine-tunes"),
+    path("<int:fine_tune_id>/", FineTuneDetailApi.as_view(), name="fine-tune-detail"),
 ]
 
 result_patterns = [
@@ -57,7 +59,11 @@ result_patterns = [
 
 result_images_patterns = [
     path("", ResultImageApi.as_view(), name="result-images"),
-    path("<int:result_image_id>/", ResultImageDetailApi.as_view(), name="result-image-detail"),
+    path(
+        "<int:result_image_id>/",
+        ResultImageDetailApi.as_view(),
+        name="result-image-detail",
+    ),
 ]
 
 weights_patterns = [
@@ -65,12 +71,13 @@ weights_patterns = [
     path("<int:weight_id>/", WeightDetailApi.as_view(), name="weight-detail"),
 ]
 
+
 urlpatterns = [
     path("types/", include((defect_type_patterns, "defect-types"))),
     path("images/", include((image_patterns, "images"))),
     path("models/", include((defect_model_patterns, "models"))),
     path("generate/", include((generate_patterns, "generates"))),
-    path("fine_tune/", include((fine_tune_patterns, "fine_tunes"))),
+    path("fine-tunes/", include((fine_tune_patterns, "fine-tunes"))),
     path("results/", include((result_patterns, "results"))),
     path("result-images/", include((result_images_patterns, "results-images"))),
     path("weights/", include((weights_patterns, "weights"))),
