@@ -4,6 +4,8 @@ from django.db.models import Q, UniqueConstraint
 
 from defect_generator.common.models import TimeStamp
 from defect_generator.defects.utils import (
+    image_file_generate_upload_path,
+    mask_file_generate_upload_path,
     weights_file_generate_upload_path,
     result_images_file_generate_upload_path,
     results_file_generate_upload_path,
@@ -49,11 +51,13 @@ class Image(models.Model):
         null=True,
         blank=True,
         max_length=600,
+        # upload_to=image_file_generate_upload_path
     )
     mask_file = models.FileField(
         null=True,
         blank=True,
         max_length=600,
+        # upload_to=mask_file_generate_upload_path
     )
     defect_type = models.ForeignKey(
         DefectType, on_delete=models.CASCADE, related_name="images"

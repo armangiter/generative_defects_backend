@@ -25,7 +25,7 @@ class ResultApi(ApiAuthMixin, APIView):
         serializer.is_valid(raise_exception=True)
 
         try:
-            result = ResultService.result_create(**serializer.validated_data)
+            result = ResultService.result_create(user=request.user, **serializer.validated_data)
         except Exception as ex:
             return Response(f"Error {ex}", status=status.HTTP_400_BAD_REQUEST)
         serializer = ResultOutputSerializer(result)

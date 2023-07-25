@@ -22,6 +22,8 @@ class ResultInputSerializer(serializers.Serializer):
     mask = serializers.FileField()
     defect_type_id = serializers.IntegerField()
     defect_model_id = serializers.IntegerField()
+    mask_mode = serializers.ChoiceField([("random", "Random"), ("in_paint", "In Paint")])
+    number_of_images = serializers.IntegerField()
 
 
 class ResultOutputSerializer(serializers.ModelSerializer):
@@ -68,12 +70,14 @@ class ResultOutputSerializer(serializers.ModelSerializer):
     defect_type = DefectTypeInResultSerializer()
 
     image = serializers.SerializerMethodField()
+    mask = serializers.SerializerMethodField()
 
     class Meta:
         model = Result
         fields = (
             "id",
             "image",
+            "mask",
             "defect_type",
             "defect_model",
             "result_images",
@@ -86,6 +90,11 @@ class ResultOutputSerializer(serializers.ModelSerializer):
     def get_image(self, obj: Result):
         if bool(obj.image) is True:
             return get_real_url(obj.image.url)
+        return None
+    
+    def get_mask(self, obj: Result):
+        if bool(obj.mask) is True:
+            return get_real_url(obj.mask.url)
         return None
 
 

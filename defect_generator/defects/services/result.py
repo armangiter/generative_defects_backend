@@ -12,7 +12,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from defect_generator.defects.models import Result, ResultImage
 from defect_generator.defects.tasks.result import result_create as result_create_task
-from defect_generator.defects.utils import write_file_to_disk
+from defect_generator.defects.utils import get_file_extension, write_file_to_disk
 
 
 logger = logging.getLogger(__name__)
@@ -21,14 +21,25 @@ logger = logging.getLogger(__name__)
 class ResultService:
     @staticmethod
     def result_create(
-        *, image: File, mask: File, defect_type_id: int, defect_model_id: int
+        *,
+        user,
+        image: File,
+        mask: File,
+        number_of_images: int,
+        mask_mode: str,
+        defect_type_id: int,
+        defect_model_id: int,
     ) -> Result:
         file_path = write_file_to_disk(file=image)
         mask_path = write_file_to_disk(file=mask)
 
         result = Result.objects.create(
+            user=user,
             defect_type_id=defect_type_id,
             defect_model_id=defect_model_id,
+            number_of_images=number_of_images,
+            mask_mode=mask_mode,
+            status=Result.STATUS_PENDING,
         )
 
         # calling celery task for uploading image field of result
@@ -93,11 +104,15 @@ class ResultCeleryService:
         ) as mask_file:
             logger.info(f"Uploading file: {file.name} ....")
 
+            # image_ext = get_file_extension(file_path_object.name)
+            # mask_ext = get_file_extension(mask_path_object.name)
+
             image_file = File(file, name=file.name)
             mask_image_file = File(mask_file, name=mask_file.name)
 
             result = Result.objects.get(id=result_id)
             result.image = image_file
+            # result.image.name = f"results/images/{result_id}"
             result.mask = mask_image_file
             result.save(update_fields=["image", "mask"])
 

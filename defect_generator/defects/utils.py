@@ -33,11 +33,11 @@ def weights_file_generate_upload_path(instance, filename):
 
 
 def results_file_generate_upload_path(instance, filename):
-    return f"results/images/{os.path.basename(filename)}"
+    return f"results/{instance.id}/images/{os.path.basename(filename)}"
 
 
 def results_mask_file_generate_upload_path(instance, filename):
-    return f"results/masks/{os.path.basename(filename)}"
+    return f"results/{instance.id}/masks/{os.path.basename(filename)}"
 
 
 def result_images_file_generate_upload_path(instance, filename):
