@@ -123,13 +123,13 @@ class Result(TimeStamp):
             "created",
             "id",
         )
-        constraints = [
-            UniqueConstraint(
-                fields=["status"],
-                condition=Q(status="g"),
-                name="unique_generating_result",
-            )
-        ]
+        # constraints = [
+        #     UniqueConstraint(
+        #         fields=["status"],
+        #         condition=Q(status="g"),
+        #         name="unique_generating_result",
+        #     )
+        # ]
 
     def __str__(self) -> str:
         return f"{self.id}"

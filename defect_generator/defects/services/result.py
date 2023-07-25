@@ -112,7 +112,6 @@ class ResultCeleryService:
 
             result = Result.objects.get(id=result_id)
             result.image = image_file
-            # result.image.name = f"results/images/{result_id}"
             result.mask = mask_image_file
             result.save(update_fields=["image", "mask"])
 
