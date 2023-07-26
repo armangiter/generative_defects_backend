@@ -88,6 +88,7 @@ class ResultOutputSerializer(serializers.ModelSerializer):
             "status",
             "user_id",
             "error",
+            "progress",
             "created",
         )
 
@@ -111,6 +112,7 @@ class ResultOutputSerializer(serializers.ModelSerializer):
 class ResultDetailInputSerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=Result.STATUS_CHOICES, required=False)
     error = serializers.CharField(required=False)
+    progress = serializers.IntegerField(required=False)
 
 
 class ResultDetailOutputSerializer(serializers.ModelSerializer):
@@ -170,6 +172,8 @@ class ResultDetailOutputSerializer(serializers.ModelSerializer):
             "result_images",
             "status",
             "user_id",
+            "error",
+            "progress",
             "created",
         )
 

@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.db import models
 from django.conf import settings
 from django.db.models import Q, UniqueConstraint
@@ -122,8 +123,10 @@ class Result(TimeStamp):
         upload_to=zip_file_generate_upload_path,
         null=True,
         blank=True,
+        default=None,
         max_length=600,
     )
+    progress = models.IntegerField(default=0)
 
     class Meta:
         ordering = (

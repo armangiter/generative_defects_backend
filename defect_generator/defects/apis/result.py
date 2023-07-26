@@ -18,14 +18,15 @@ from defect_generator.defects.serializers.result import (
 
 # [GET, POST] api/defects/results/
 class ResultApi(ApiAuthMixin, APIView):
-
     @extend_schema(request=ResultInputSerializer)
     def post(self, request):
         serializer = ResultInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:
-            result = ResultService.result_create(user=request.user, **serializer.validated_data)
+            result = ResultService.result_create(
+                user=request.user, **serializer.validated_data
+            )
         except Exception as ex:
             return Response(f"Error {ex}", status=status.HTTP_400_BAD_REQUEST)
         serializer = ResultOutputSerializer(result)
@@ -39,7 +40,7 @@ class ResultApi(ApiAuthMixin, APIView):
         filter_serializer.is_valid(raise_exception=True)
         filters = filter_serializer.validated_data
 
-        query = ResultService.result_list(user=request.user,filters=filters)
+        query = ResultService.result_list(user=request.user, filters=filters)
 
         serializer = ResultOutputSerializer(query, many=True)
 
@@ -54,14 +55,17 @@ class ResultDetailApi(ApiAuthMixin, APIView):
             return []
         else:
             return super().get_permissions()
-        
+
     @extend_schema(request=ResultDetailInputSerializer)
     def put(self, request, result_id):
         serializer = ResultDetailInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:
-            ResultService.result_update(result_id=result_id, **serializer.validated_data)
+            ResultService.result_update(
+                result_id=result_id,
+                data=serializer.validated_data,
+            )
         except Exception as ex:
             return Response(f"Error {ex}", status=status.HTTP_400_BAD_REQUEST)
 

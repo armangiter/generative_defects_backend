@@ -9,7 +9,7 @@ from django.core.files.storage import FileSystemStorage
 from defect_generator.common.services import model_update
 from defect_generator.common.types import DjangoModelType
 from defect_generator.defects.filters import ResultFilter
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.exceptions import NotFound 
 
 from defect_generator.defects.models import Result, ResultImage
 from defect_generator.defects.tasks.result import result_create as result_create_task
@@ -51,7 +51,7 @@ class ResultService:
     def result_list(*, user, filters=None) -> QuerySet[Result]:
         queryset = (
             Result.objects.prefetch_related("result_images")
-            .select_related("defect_type", "defect_model")
+            .select_related("defect_type", "defect_model", "defect_type__weight")
             .order_by("-id")
             .filter(user=user)
         )
@@ -62,21 +62,28 @@ class ResultService:
         return ResultFilter(filters, queryset=queryset).qs
 
     @staticmethod
-    def result_update(*, result_id: int, status: str = None, error: str = None) -> None:
-        if status is None:
-            result = Result.objects.filter(id=result_id).update(error=error)
-        elif error is None:
-            result = Result.objects.filter(id=result_id).update(status=status)
-        else:
-            result = Result.objects.filter(id=result_id).update(
-                status=status, error=error
-            )
+    def result_update(
+        *, result_id: int, data: dict) -> None:
+        try:
+            result = Result.objects.get(id=result_id)
+        except Result.DoesNotExist:
+            raise NotFound({"message", "result not found with provided id"})
+        print(data)
+        fields = []
+        if data.get("status") is not None:
+            fields.append("status")
+        if data.get("error") is not None:
+            fields.append("error")
+        if data.get("progress") is not None:
+            fields.append("progress")
+        
+        model_update(instance=result, fields=fields, data=data)
 
     @staticmethod
     def result_get(*, id: int, filters=None) -> Result:
         return (
             Result.objects.prefetch_related("result_images")
-            .select_related("defect_type", "defect_model")
+            .select_related("defect_type", "defect_model", "defect_type__weight")
             .get(id=id)
         )
 
