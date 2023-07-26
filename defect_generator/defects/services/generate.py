@@ -18,6 +18,7 @@ from defect_generator.defects.exceptions import AlreadyGeneratingError
 
 from defect_generator.defects.models import DefectModel, DefectType, Result, ResultImage
 from defect_generator.defects.serializers.generate import GenerateInputSerializer
+from defect_generator.defects.services.result import ResultService
 from defect_generator.defects.tasks.generate import generate as generate_task
 from defect_generator.defects.utils import (
     get_file_extension,
@@ -187,10 +188,9 @@ class GenerateService:
         # uploading zip file
         file_path_object = Path(zip_file_path)
         with file_path_object.open(mode="rb") as file:
-
             ext = get_file_extension(file_path_object.name)
             file_name = f"{str(uuid.uuid4())}.{ext}"
-            
+
             zip_file = File(file, name=file_name)
             result.zip_file = zip_file
             result.save(update_fields=["zip_file"])
@@ -209,15 +209,14 @@ class GenerateService:
         mask_mode: str,
         number_of_images: int,
     ) -> None:
-        Result.objects.create(
-            defect_model_id=defect_model_id,
-            defect_type_id=defect_type_id,
-            user_id=user.id,
+        ResultService.result_create(
+            user=user,
             image=image_file,
             mask=mask_file,
             number_of_images=number_of_images,
             mask_mode=mask_mode,
-            status=Result.STATUS_PENDING,
+            defect_model_id=defect_model_id,
+            defect_type_id=defect_type_id,
         )
 
 
