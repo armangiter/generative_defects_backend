@@ -22,7 +22,9 @@ class ResultInputSerializer(serializers.Serializer):
     mask = serializers.FileField()
     defect_type_id = serializers.IntegerField()
     defect_model_id = serializers.IntegerField()
-    mask_mode = serializers.ChoiceField([("random", "Random"), ("in_paint", "In Paint")])
+    mask_mode = serializers.ChoiceField(
+        [("random", "Random"), ("in_paint", "In Paint")]
+    )
     number_of_images = serializers.IntegerField()
 
 
@@ -71,6 +73,7 @@ class ResultOutputSerializer(serializers.ModelSerializer):
 
     image = serializers.SerializerMethodField()
     mask = serializers.SerializerMethodField()
+    zip_file = serializers.SerializerMethodField()
 
     class Meta:
         model = Result
@@ -78,6 +81,7 @@ class ResultOutputSerializer(serializers.ModelSerializer):
             "id",
             "image",
             "mask",
+            "zip_file",
             "defect_type",
             "defect_model",
             "result_images",
@@ -91,10 +95,15 @@ class ResultOutputSerializer(serializers.ModelSerializer):
         if bool(obj.image) is True:
             return get_real_url(obj.image.url)
         return None
-    
+
     def get_mask(self, obj: Result):
         if bool(obj.mask) is True:
             return get_real_url(obj.mask.url)
+        return None
+
+    def get_zip_file(self, obj: Result):
+        if bool(obj.zip_file) is True:
+            return get_real_url(obj.zip_file.url)
         return None
 
 
@@ -146,17 +155,16 @@ class ResultDetailOutputSerializer(serializers.ModelSerializer):
     defect_type = DefectTypeInResultSerializer()
 
     image = serializers.SerializerMethodField()
-
-    def get_image(self, obj: Result):
-        if bool(obj.image) is True:
-            return get_real_url(obj.image.url)
-        return None
+    mask = serializers.SerializerMethodField()
+    zip_file = serializers.SerializerMethodField()
 
     class Meta:
         model = Result
         fields = (
             "id",
             "image",
+            "mask",
+            "zip_file",
             "defect_type",
             "defect_model",
             "result_images",
@@ -164,3 +172,18 @@ class ResultDetailOutputSerializer(serializers.ModelSerializer):
             "user_id",
             "created",
         )
+
+    def get_image(self, obj: Result):
+        if bool(obj.image) is True:
+            return get_real_url(obj.image.url)
+        return None
+
+    def get_mask(self, obj: Result):
+        if bool(obj.mask) is True:
+            return get_real_url(obj.mask.url)
+        return None
+
+    def get_zip_file(self, obj: Result):
+        if bool(obj.zip_file) is True:
+            return get_real_url(obj.zip_file.url)
+        return None

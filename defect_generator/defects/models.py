@@ -10,6 +10,7 @@ from defect_generator.defects.utils import (
     result_images_file_generate_upload_path,
     results_file_generate_upload_path,
     results_mask_file_generate_upload_path,
+    zip_file_generate_upload_path,
 )
 
 
@@ -117,6 +118,12 @@ class Result(TimeStamp):
     )
     generated_at = models.DateTimeField(auto_now=True)
     error = models.TextField(null=True, blank=True, default=None)
+    zip_file = models.FileField(
+        upload_to=zip_file_generate_upload_path,
+        null=True,
+        blank=True,
+        max_length=600,
+    )
 
     class Meta:
         ordering = (

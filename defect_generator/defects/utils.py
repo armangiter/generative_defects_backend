@@ -44,6 +44,10 @@ def result_images_file_generate_upload_path(instance, filename):
     return f"result_images/result_{instance.result_id}/{os.path.basename(filename)}"
 
 
+def zip_file_generate_upload_path(instance, filename):
+    return f"results/{instance.id}/{os.path.basename(filename)}"
+
+
 def download_file(url: str, file_name: str):
     models_path = os.path.join(settings.MEDIA_ROOT, "models")
     if not os.path.exists(models_path):

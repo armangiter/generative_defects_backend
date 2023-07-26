@@ -1,6 +1,8 @@
 import copy
 import logging
+import os
 from pathlib import Path
+from zipfile import ZipFile
 
 from django.core.files import File
 from django.db import transaction
@@ -13,13 +15,14 @@ import requests
 from defect_generator.common.services import model_update
 from defect_generator.defects.exceptions import AlreadyGeneratingError
 
-from defect_generator.defects.models import DefectModel, DefectType, Result
+from defect_generator.defects.models import DefectModel, DefectType, Result, ResultImage
 from defect_generator.defects.serializers.generate import GenerateInputSerializer
 from defect_generator.defects.tasks.generate import generate as generate_task
 from defect_generator.defects.utils import (
     get_real_url,
     write_file_to_disk,
 )
+from defect_generator.integrations.aws.client import s3_get_client, s3_get_credentials
 
 
 logger = logging.getLogger(__name__)
@@ -150,7 +153,7 @@ class GenerateService:
                 result.id,
                 user.id,
             )
-    
+
     @staticmethod
     def finish_generate_new(*, result_id: int, user_id: int) -> str:
         # update status of generating result
@@ -159,6 +162,34 @@ class GenerateService:
         result, has_updated = model_update(
             instance=result, fields=["status"], data={"status": Result.STATUS_FINISHED}
         )
+
+        # get generated images of result
+        result_images = ResultImage.objects.filter(result_id=result.id)
+
+        # create a zip file
+        zip_file_path = f"zip_file_{result.id}.zip"
+        with ZipFile(zip_file_path, "w") as zip_file:
+            credentials = s3_get_credentials()
+            s3 = s3_get_client(credentials=credentials)
+
+            for image in result_images:
+                saved_path = f"{os.path.basename(image.file.name)}"
+                s3.download_file(
+                    Bucket=credentials.bucket_name,
+                    Filename=saved_path,
+                    Key=f"media/{image.file.name}",
+                )
+                zip_file.write(saved_path)
+                os.remove(saved_path)
+
+        # uploading zip file
+        file_path_object = Path(zip_file_path)
+        with file_path_object.open(mode="rb") as file:
+            zip_file = File(file, name=file.name)
+            result.zip_file = zip_file
+            result.save(update_fields=["zip_file"])
+
+        os.remove(zip_file_path)
 
     @staticmethod
     def generate_new(
