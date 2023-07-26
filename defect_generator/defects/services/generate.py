@@ -2,6 +2,7 @@ import copy
 import logging
 import os
 from pathlib import Path
+import uuid
 from zipfile import ZipFile
 
 from django.core.files import File
@@ -19,6 +20,7 @@ from defect_generator.defects.models import DefectModel, DefectType, Result, Res
 from defect_generator.defects.serializers.generate import GenerateInputSerializer
 from defect_generator.defects.tasks.generate import generate as generate_task
 from defect_generator.defects.utils import (
+    get_file_extension,
     get_real_url,
     write_file_to_disk,
 )
@@ -185,7 +187,11 @@ class GenerateService:
         # uploading zip file
         file_path_object = Path(zip_file_path)
         with file_path_object.open(mode="rb") as file:
-            zip_file = File(file, name=file.name)
+
+            ext = get_file_extension(file_path_object.name)
+            file_name = f"{str(uuid.uuid4())}.{ext}"
+            
+            zip_file = File(file, name=file_name)
             result.zip_file = zip_file
             result.save(update_fields=["zip_file"])
 
