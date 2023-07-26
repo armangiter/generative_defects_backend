@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+import uuid
 
 from django.db import transaction
 from django.db.models import QuerySet
@@ -104,11 +105,14 @@ class ResultCeleryService:
         ) as mask_file:
             logger.info(f"Uploading file: {file.name} ....")
 
-            # image_ext = get_file_extension(file_path_object.name)
-            # mask_ext = get_file_extension(mask_path_object.name)
+            image_ext = get_file_extension(file_path_object.name)
+            mask_ext = get_file_extension(mask_path_object.name)
 
-            image_file = File(file, name=file.name)
-            mask_image_file = File(mask_file, name=mask_file.name)
+            file_name = f"{str(uuid.uuid4())}.{image_ext}"
+            mask_name = f"{str(uuid.uuid4())}.{mask_ext}"
+
+            image_file = File(file, name=file_name)
+            mask_image_file = File(mask_file, name=mask_name)
 
             result = Result.objects.get(id=result_id)
             result.image = image_file
