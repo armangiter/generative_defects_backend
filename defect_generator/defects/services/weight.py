@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+import uuid
 
 from django.db import transaction
 from django.db.models import QuerySet
@@ -9,7 +10,7 @@ from django.core.files.storage import FileSystemStorage
 
 from defect_generator.defects.models import Weight
 from defect_generator.defects.tasks.weight import upload_weight as upload_weight_task
-from defect_generator.defects.utils import write_file_to_disk
+from defect_generator.defects.utils import get_file_extension, write_file_to_disk
 
 
 logger = logging.getLogger(__name__)
@@ -49,7 +50,10 @@ class WeightCeleryService:
         with file_path_object.open(mode="rb") as file:
             logger.info(f"Uploading file: {file.name} ....")
 
-            weight_file = File(file, name=file.name)
+            ext = get_file_extension(file_path_object.name)
+            file_name = f"{str(uuid.uuid4())}.{ext}"
+            
+            weight_file = File(file, name=file_name)
 
             Weight.objects.create(file=weight_file)
 

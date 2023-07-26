@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+import uuid
 
 from django.db import transaction
 from django.db.models import QuerySet
@@ -8,7 +9,7 @@ from django.core.files.storage import FileSystemStorage
 
 from defect_generator.defects.models import ResultImage
 from defect_generator.defects.tasks.result_image import result_image_create
-from defect_generator.defects.utils import write_file_to_disk
+from defect_generator.defects.utils import get_file_extension, write_file_to_disk
 
 
 logger = logging.getLogger(__name__)
@@ -45,15 +46,15 @@ class ResultImageCeleryService:
         result_id: int,
     ) -> None:
         storage = FileSystemStorage()
-
         result_images = []
         for file_path in files_path:
             file_path_object = Path(file_path)
 
             with file_path_object.open(mode="rb") as file:
                 logger.info(f"Uploading file: {file.name} ....")
-
-                result_image_file = File(file, name=file.name)
+                ext = get_file_extension(file_path_object.name)
+                file_name = f"{str(uuid.uuid4())}.{ext}"
+                result_image_file = File(file, name=file_name)
                 ResultImage.objects.create(result_id=result_id, file=result_image_file)
 
         for file_name in files_name:

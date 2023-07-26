@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+import uuid
 
 from django.db import transaction
 from django.db.models import QuerySet
@@ -86,14 +87,17 @@ class ImageUploadService:
             image_ext = get_file_extension(file_path_object.name)
             mask_ext = get_file_extension(mask_path_object.name)
 
-            image_file = File(file, name=f"{image.id}.{image_ext}")
-            mask_image_file = File(mask_file, name=f"mask_{image.id}.{mask_ext}")
+            file_name = f"{str(uuid.uuid4())}.{image_ext}"
+            mask_file_name = f"{str(uuid.uuid4())}.{mask_ext}"
+
+            image_file = File(file, name=file_name)
+            mask_image_file = File(mask_file, name=mask_file_name)
 
             # Upload the file
             image.file = image_file
-            image.file.name = f"images/img_{image.id}.{image_ext}"
+            image.file.name = f"images/{file_name}"
             image.mask_file = mask_image_file
-            image.mask_file.name = f"masks/mask_{image.id}.{mask_ext}"
+            image.mask_file.name = f"masks/{mask_file_name}"
             image.save(update_fields=["file", "mask_file"])
 
         storage.delete(file_name)
