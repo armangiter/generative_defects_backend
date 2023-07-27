@@ -5,6 +5,7 @@ from django.db.models import Q, UniqueConstraint
 
 from defect_generator.common.models import TimeStamp
 from defect_generator.defects.utils import (
+    icon_image_generate_upload_path,
     image_file_generate_upload_path,
     mask_file_generate_upload_path,
     weights_file_generate_upload_path,
@@ -42,6 +43,12 @@ class DefectType(models.Model):
     )
     weight = models.ForeignKey(
         Weight, on_delete=models.SET_NULL, null=True, blank=True, default=None
+    )
+    icon_image = models.FileField(
+        upload_to=icon_image_generate_upload_path,
+        null=True,
+        blank=True,
+        max_length=600,
     )
 
     def __str__(self) -> str:

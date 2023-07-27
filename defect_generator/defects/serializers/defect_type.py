@@ -11,6 +11,7 @@ class DefectTypeFilterSerializer(serializers.Serializer):
 class DefectTypeInputSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=127)
     command = serializers.CharField(max_length=512)
+    icon_image = serializers.FileField()
 
 
 class DefectTypeOutputSerializer(serializers.ModelSerializer):

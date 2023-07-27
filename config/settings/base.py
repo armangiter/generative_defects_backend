@@ -10,13 +10,15 @@ SECRET_KEY = env.str("SECRET_KEY")
 
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    "128.65.167.198",
-    "127.0.0.1",
-    "localhost",
-    "generative",
-    "153.156.254.150",
-]
+
+ALLOWED_HOSTS = ["*"]
+# ALLOWED_HOSTS = [
+#     "128.65.167.198",
+#     "127.0.0.1",
+#     "localhost",
+#     "generative",
+#     "153.156.254.150",
+# ]
 
 
 LOCAL_APPS = [
@@ -66,6 +68,9 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8997",
     "http://localhost:8995",
 ]
+
+# TODO this is temporarily, Its highly recommended to explicitly define allowed origins
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",

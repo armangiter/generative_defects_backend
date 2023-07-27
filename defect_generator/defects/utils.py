@@ -48,6 +48,10 @@ def zip_file_generate_upload_path(instance, filename):
     return f"results/{instance.id}/{os.path.basename(filename)}"
 
 
+def icon_image_generate_upload_path(instance, filename):
+    return f"defect_types/{instance.id}/icon_images/{os.path.basename(filename)}"
+
+
 def download_file(url: str, file_name: str):
     models_path = os.path.join(settings.MEDIA_ROOT, "models")
     if not os.path.exists(models_path):
