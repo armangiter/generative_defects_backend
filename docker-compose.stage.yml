@@ -22,6 +22,32 @@ services:
       - generative-network
       - inference-network
 
+  db:
+    container_name: generative_defects_db
+    image: postgres:14.6
+    env_file:
+      - .env
+    volumes:
+        - pgdata:/var/lib/postgresql/data/
+    networks:
+      - generative-network
+
+  minio:
+    container_name: generative_defects_minio
+    image: minio/minio
+    hostname: "minio"
+    volumes:
+      - minio-data:/minio_files
+    env_file:
+      - .env
+    command: 'minio server /minio_files --console-address ":9001"'
+    ports:
+      - "81:9000"
+      - "9001:9001"
+    networks:
+      - generative-network
+      - minio-network
+
   celery:
     container_name: generative_defects_celery
     build: .
