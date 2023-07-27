@@ -28,8 +28,8 @@ class UserService:
 
         return user
 
-    @transaction.atomic
     @staticmethod
+    @transaction.atomic
     def user_update(*, user: User, data) -> User:
         non_side_effect_fields = ["first_name", "last_name"]
 

@@ -63,8 +63,8 @@ class ImageService:
 
 
 class ImageUploadService:
-    @transaction.atomic
     @staticmethod
+    @transaction.atomic
     def image_create(
         *,
         file_path: str,
@@ -103,8 +103,8 @@ class ImageUploadService:
         storage.delete(file_name)
         storage.delete(mask_file_name)
 
-    @transaction.atomic
     @staticmethod
+    @transaction.atomic
     def image_update(
         *,
         image_id: int,

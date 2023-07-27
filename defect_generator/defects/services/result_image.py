@@ -37,8 +37,8 @@ class ResultImageService:
 
 
 class ResultImageCeleryService:
-    @transaction.atomic
     @staticmethod
+    @transaction.atomic
     def image_create(
         *,
         files_path: str,

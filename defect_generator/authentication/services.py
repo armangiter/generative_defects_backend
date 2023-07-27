@@ -8,8 +8,8 @@ User = get_user_model()
 
 
 class AuthenticationService:
-    @transaction.atomic
     @staticmethod
+    @transaction.atomic
     def user_sign_up(*, email: str, password: str) -> User:
         return User.objects.create_user(email=email, password=password)
     

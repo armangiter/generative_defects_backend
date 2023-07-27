@@ -93,8 +93,8 @@ class ResultService:
 
 
 class ResultCeleryService:
-    @transaction.atomic
     @staticmethod
+    @transaction.atomic
     def result_create(
         *,
         file_path: str,

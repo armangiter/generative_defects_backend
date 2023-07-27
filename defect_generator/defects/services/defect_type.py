@@ -53,8 +53,8 @@ class DefectTypeService:
 
 
 class DefectTypeCeleryService:
-    @transaction.atomic
     @staticmethod
+    @transaction.atomic
     def defect_type_create(
         *,
         file_path: str,

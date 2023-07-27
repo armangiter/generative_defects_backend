@@ -22,8 +22,8 @@ User = get_user_model()
 
 
 class FineTuneJobService:
-    @transaction.atomic
     @staticmethod
+    @transaction.atomic
     def get_earliest_fine_tune_job(*, filters=None) -> None:
         pending_fine_tune = (
             FineTune.objects.filter(status=FineTune.STATUS_PENDING)
@@ -42,9 +42,9 @@ class FineTuneJobService:
         ]
         FineTuneImage.objects.bulk_create(fine_tune_images)
 
-        generating_fine_tune, updated = model_update(
-            instance=pending_fine_tune,
-            fields=["status"],
-            data={"status": FineTune.STATUS_GENERATING},
-        )
-        return generating_fine_tune
+        # generating_fine_tune, updated = model_update(
+        #     instance=pending_fine_tune,
+        #     fields=["status"],
+        #     data={"status": FineTune.STATUS_GENERATING},
+        # )
+        return pending_fine_tune
